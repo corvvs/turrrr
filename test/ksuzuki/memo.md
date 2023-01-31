@@ -45,3 +45,20 @@ opam initからはvscode再起動の度に後半は毎回行う？（未確認�
 
 
 ## OCaml入門
+
+とりあえず以下をやる
+
+http://ocaml.jp/?OCaml%E5%85%A5%E9%96%80%281%29
+
+## 今後の予定
+
+- Ocamlの学習: 1週×2
+- Makefile: 3日
+- json to 構造体（？）: 1～5日
+- 遷移: 5日
+- チューリングマシン×5: 5日
+- ボーナス: 5日
+
+## compileについて
+
+https://ryskosn.hatenadiary.com/entry/2017/09/18/192919
