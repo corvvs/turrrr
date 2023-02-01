@@ -59,6 +59,37 @@ http://ocaml.jp/?OCaml%E5%85%A5%E9%96%80%281%29
 - チューリングマシン×5: 5日
 - ボーナス: 5日
 
-## compileについて
+## OCaml参考サイト
 
-https://ryskosn.hatenadiary.com/entry/2017/09/18/192919
+- compileについて：https://ryskosn.hatenadiary.com/entry/2017/09/18/192919
+- サンプルプログラム集：http://simplesandsamples.com/println.ml.html
+- Makefile参考：https://www.fos.kuis.kyoto-u.ac.jp/~igarashi/OCaml/
+
+## 実装について
+
+pdfにある以下のような部分
+
+```
+(scanright, .) -> (scanright, ., RIGHT)
+```
+がなんとなく関数っぽい。
+そして、この関数をつなげて出力するようにすれば関数型言語っぽくなるのではと思った。
+
+また、このつなげるパターンとかでもしかして時間計算量が計算できる……？
+
+## チューリングマシンについて
+
+- 今回のチューリングマシンは決定的チューリングマシン
+> 遷移関数において、現在の状態 q と着目位置にある記号 a の、ある組 (q, a) に対し、値（すなわちその時にすべき動作）が、高々一つならば、そのチューリングマシンは「決定的」（deterministic）である（https://ja.wikipedia.org/wiki/%E3%83%81%E3%83%A5%E3%83%BC%E3%83%AA%E3%83%B3%E3%82%B0%E3%83%9E%E3%82%B7%E3%83%B3#%E6%B1%BA%E5%AE%9A%E7%9A%84%E3%81%A8%E9%9D%9E%E6%B1%BA%E5%AE%9A%E7%9A%84 ）
+
+- 現在の状態Sから次の状態へN個の分岐（選択肢）があり、分岐の深さをHとする。決定性チューリングマシンの場合、計算量はN^H？（https://motojapan.hateblo.jp/entry/2017/11/15/082738#%E6%B1%BA%E5%AE%9A%E6%80%A7%E9%9D%9E%E6%B1%BA%E5%AE%9A%E6%80%A7%E3%83%81%E3%83%A5%E3%83%BC%E3%83%AA%E3%83%B3%E3%82%B0%E3%83%9E%E3%82%B7%E3%83%B3%E3%81%AE%E9%81%95%E3%81%84 ）
+
+- チューリングマシンの説明。わかりやすかった：https://zenn.dev/airev/articles/airev-quantum-03
+
+- 時間計算量と空間計算量：https://www.marulabo.net/docs/turing-complex/#%E3%80%8C%E6%99%82%E9%96%93%E8%A8%88%E7%AE%97%E9%87%8F%E3%80%8D%E3%81%A8%E3%80%8C%E7%A9%BA%E9%96%93%E8%A8%88%E7%AE%97%E9%87%8F%E3%80%8Dblog
+
+- プログラムの停止性判定。（一般的な話？）
+> プログラムの停止性を有限時間で判定するプログラムを作ることができない (https://www.eidos.ic.i.u-tokyo.ac.jp/~alumni/liquid/notes/computation.pdf の11プログラムの停止性判定 )
+
+- 上記のpdfの16計算量の理論が、計算量にかかわる話
+  - クラスP：決定性 TM において問題サイズの多項式時間で解ける問題
