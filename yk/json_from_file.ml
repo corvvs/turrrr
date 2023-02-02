@@ -1,5 +1,6 @@
 open Yojson
 open Yojson.Safe
+open Yojson.Basic.Util
 
 let read_line_from_ch ch = try [input_line ch] with End_of_file -> []
 
@@ -14,7 +15,7 @@ let get_file_lines path =
   let lines = collect_lines_from_ch ch [] in (close_in ch; lines)
 
 (* ocaml ではリストに対する push back 操作は推奨されない. *)
-(* そのかわり, push front した後で前後反転する. *)
+(* そのかわり, push front した後で前後反転する -> List.rev *)
 let print_lines ls = List.iter print_endline (List.rev ls)
 
 (* ch に対して何かをする *)
@@ -27,14 +28,17 @@ let _ = if argv_len < 2 then (
   (Printf.printf "usage: %s [some file]\n" (List.hd argv_list))
 ) else (
   (* argv[1] の中身を表示 *)
-  let json = (
-    List.hd (List.tl argv_list) |>
-    get_file_lines |>
-    List.rev |>
-    List.fold_left (fun a b -> a ^ b ^ "\n") "" |>
-    Yojson.Safe.from_string
-  ) in
-  (* print_string joined_str *)
-  Format.printf "Parsed to %a" Yojson.Safe.pp json
-)
+  let json = List.hd (List.tl argv_list)
+    (* |> 演算子: `x |> f` とした時, x を f に適用し, その結果を返す. *)
+    (* このとき x は f の「束縛されていない引数のうち最も左にあるもの」に束縛される *)
+    (* たとえば, `f = fun x y -> x - y` だとすると, `1 |> f` は `fun y -> 1 - x` と等価な関数を返す. *)
+    |> get_file_lines
+    |> List.rev
+    |> List.fold_left (fun a b -> a ^ b ^ "\n") ""
+    |> from_string
+  in json
+    |> Yojson.Safe.to_basic
+    |> member "name" (* Basic にしてから member でフィールド選択 *)
+    |> Format.printf "Parsed to %a" Yojson.Basic.pp
 
+)
