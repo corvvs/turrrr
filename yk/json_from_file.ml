@@ -27,11 +27,14 @@ let _ = if argv_len < 2 then (
   (Printf.printf "usage: %s [some file]\n" (List.hd argv_list))
 ) else (
   (* argv[1] の中身を表示 *)
-  let argv1 = List.hd (List.tl argv_list) in
-  let lines = List.rev (get_file_lines argv1) in
-  let joined_str = List.fold_left (fun a b -> a ^ b ^ "\n") "" lines in
+  let json = (
+    List.hd (List.tl argv_list) |>
+    get_file_lines |>
+    List.rev |>
+    List.fold_left (fun a b -> a ^ b ^ "\n") "" |>
+    Yojson.Safe.from_string
+  ) in
   (* print_string joined_str *)
-  let json = Yojson.Safe.from_string joined_str in
   Format.printf "Parsed to %a" Yojson.Safe.pp json
 )
 
