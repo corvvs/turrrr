@@ -22,6 +22,18 @@ let print_lines ls = List.iter print_endline ls
 
 let argv_list = (Array.to_list Sys.argv)
 let argv_len = List.length argv_list
+
+(* ファイル path の中身を JSONとしてパース *)
+let json_from_path path = path
+  (* |> 演算子: `x |> f` とした時, x を f に適用し, その結果を返す. *)
+  (* このとき x は f の「束縛されていない引数のうち最も左にあるもの」に束縛される *)
+  (* たとえば, `f = fun x y -> x - y` だとすると, `1 |> f` は `fun y -> 1 - x` と等価な関数を返す. *)
+  |> get_file_lines
+  (* 文字列連結演算子は ^ *)
+  |> List.fold_left (fun a b -> a ^ b ^ "\n") ""
+  (* ここでJSONパース *)
+  |> Yojson.Safe.from_string
+
 let _ = if argv_len < 2 then (
   (* usage 表示 *)
   argv_list
@@ -29,16 +41,9 @@ let _ = if argv_len < 2 then (
     |> Printf.printf "usage: %s [some file]\n"
 ) else (
   (* argv[1] の中身を表示 *)
-  let json = List.hd (List.tl argv_list)
-    (* |> 演算子: `x |> f` とした時, x を f に適用し, その結果を返す. *)
-    (* このとき x は f の「束縛されていない引数のうち最も左にあるもの」に束縛される *)
-    (* たとえば, `f = fun x y -> x - y` だとすると, `1 |> f` は `fun y -> 1 - x` と等価な関数を返す. *)
-    |> get_file_lines
-    |> List.fold_left (fun a b -> a ^ b ^ "\n") ""
-    |> from_string
-  in json
+  let json = json_from_path (List.hd (List.tl argv_list)) in json
     |> Yojson.Safe.to_basic
     |> member "name" (* Basic にしてから member でフィールド選択 *)
-    |> Format.printf "Parsed to %a" Yojson.Basic.pp
+    |> Format.printf "Parsed to %a\n" Yojson.Basic.pp
 
 )
