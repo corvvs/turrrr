@@ -91,6 +91,20 @@ let rec repeat_string (s: string) (n: int) (t: string) = match n with
     | 0 -> t
     | _ -> repeat_string s (n - 1) (t ^ s)
 
+let stringify_list (ss: string list) = List.fold_left (
+  fun a b -> match a with
+          | ""  -> b
+          | _   -> a ^ ", " ^ b
+) "" ss
+
+let print_list_with_prefix prefix list = 
+  print_endline (prefix ^ ": " ^  "[" ^ (stringify_list list) ^ "]")
+
+let stringify_transition from_state transition =
+  Printf.sprintf "(%s, %s) -> (%s, %s, %s)"
+    from_state transition.read
+    transition.to_state transition.write transition.action
+
 let print_tm_name (tm: turing_machine) = 
   let len = String.length tm.name in
   let width = len |> (fun a b -> a + b) 4 |> max 78 in
@@ -104,8 +118,35 @@ let print_tm_name (tm: turing_machine) =
     (repeat_string "*" (width + 2) "")
   ]
 
-let print_tm (tm: turing_machine) = 
-    print_tm_name tm
+let print_tm_alphabet (tm: turing_machine) =
+  print_list_with_prefix "Alphabet" tm.alphabet
+
+let print_tm_states (tm: turing_machine) =
+  print_list_with_prefix "States" tm.states
+
+let print_tm_initial (tm: turing_machine) =
+  print_endline ("Initial: " ^ tm.initial)
+
+let print_tm_finals (tm: turing_machine) =
+  print_list_with_prefix "Finals" tm.finals
+  
+let print_tm_transition (tm: turing_machine) =
+  TransitionMap.iter (fun from_state transition_list ->
+    List.iter (fun transition ->
+      print_endline (stringify_transition from_state transition)
+    ) transition_list
+  ) tm.transitions
+  
+
+let print_tm_prologue (tm: turing_machine) = 
+  List.iter (fun f -> f tm) [
+    print_tm_name;
+    print_tm_alphabet;
+    print_tm_states;
+    print_tm_initial;
+    print_tm_finals;
+    print_tm_transition
+  ]
 
 
 (* ch から1行読み取り, リストに入れて返す. EOF に達している場合は空のリストを返す. *)
@@ -150,7 +191,7 @@ let _ = if argv_len < 2 then (
   json_from_path (List.hd (List.tl argv_list))
     |> Yojson.Safe.to_basic
     |> create_tm
-    |> print_tm
+    |> print_tm_prologue
     (* |> (fun tm -> print_endline tm.initial) *)
 )
 
