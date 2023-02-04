@@ -86,17 +86,26 @@ let create_tm (json: Yojson.Basic.t) = {
     |> to_transitions
 }
 
-(* let tmr: turing_machine = {
-  name = "unary_sub";
-	alphabet = [ "1"; "."; "-"; "=" ];
-  blank = ".";
-	states = [ "scanright"; "eraseone"; "subone"; "skip"; "HALT" ];
-  initial = "scanright";
-  finals = [ "HALT" ];
-  transitions = tras;
-} *)
+(* 文字列 t に 文字列 s を n 回連結して返す *)
+let rec repeat_string (s: string) (n: int) (t: string) = match n with
+    | 0 -> t
+    | _ -> repeat_string s (n - 1) (t ^ s)
 
+let print_tm_name (tm: turing_machine) = 
+  let len = String.length tm.name in
+  let width = len |> (fun a b -> a + b) 4 |> max 78 in
+  let wr = width / 2 in
+  let wl = width - wr in
+  let lenr = len / 2 in
+  let lenl = len - lenr in
+  List.iter print_endline [
+    (repeat_string "*" (width + 2) "");
+    ("*" ^ (repeat_string " " (wl - lenl) "") ^ tm.name ^ (repeat_string " " (wr - lenr) "") ^ "*");
+    (repeat_string "*" (width + 2) "")
+  ]
 
+let print_tm (tm: turing_machine) = 
+    print_tm_name tm
 
 
 (* ch から1行読み取り, リストに入れて返す. EOF に達している場合は空のリストを返す. *)
@@ -138,9 +147,10 @@ let _ = if argv_len < 2 then (
     |> Printf.printf "usage: %s [some file]\n"
 ) else (
   (* argv[1] の中身を表示 *)
-  let tmr = json_from_path (List.hd (List.tl argv_list))
+  json_from_path (List.hd (List.tl argv_list))
     |> Yojson.Safe.to_basic
     |> create_tm
-  in print_endline tmr.initial
+    |> print_tm
+    (* |> (fun tm -> print_endline tm.initial) *)
 )
 
