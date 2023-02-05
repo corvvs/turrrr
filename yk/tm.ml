@@ -2,6 +2,10 @@ open Yojson
 open Yojson.Safe
 open Yojson.Basic.Util
 
+let tx_cur = "\027[30m\027[42m"
+let tx_rst = "\027[0m"
+let print_width = 80
+let tape_size = 40
 
 type turing_machine_transition = {
   read: string;
@@ -17,7 +21,13 @@ module TransitionMap = Map.Make(String)
 
 type transitions = (turing_machine_transition list) TransitionMap.t
 
-type turing_machine = {
+type turing_machine_status = {
+  state: string;
+  head: int;
+  tape: string array;
+}
+
+type turing_machine_definition = {
   name: string;
   alphabet: string list;
   blank: string;
@@ -26,6 +36,56 @@ type turing_machine = {
   finals: string list;
   transitions: transitions;
 }
+
+type turing_machine = {
+  definition: turing_machine_definition;
+  status: turing_machine_status;
+}
+
+let stringify_tm_tape status =
+  let x = status.head in
+  Array.mapi (fun i a -> match i with
+    | i when i == x -> (tx_cur ^ a ^ tx_rst)
+    | _ -> a
+  ) status.tape
+  |> Array.fold_left (fun s a -> s ^ a) ""
+
+let stringify_transition from_state transition =
+  Printf.sprintf "(%s, %s) -> (%s, %s, %s)"
+    from_state transition.read
+    transition.to_state transition.write transition.action
+
+
+let print_tm_transition def status transition =
+  Printf.printf "[%s] %s\n" (stringify_tm_tape status) (stringify_transition status.state transition)
+
+
+(* 可能なら次の状態への遷移を行う *)
+(* definition と status を取る *)
+(* 現在状態がfinalsに含まれる場合, unitを返す *)
+(* そうでない場合は新しいstatusを生成して返す *)
+let get_next_staus def status =
+  if
+    List.exists (fun s -> s = status.state) def.finals
+  then
+    None
+  else (
+    let char = Array.get status.tape status.head in
+    let transition = TransitionMap.find status.state def.transitions
+      |> List.find (fun transition -> (transition.read = char)) in
+    let new_tape = Array.copy status.tape in
+      print_tm_transition def status transition;
+      Array.set new_tape status.head transition.write;
+      Some {
+        state = transition.to_state;
+        tape = new_tape;
+        head = match transition.action with
+          | "LEFT"  -> status.head - 1
+          | _       -> status.head + 1
+      }
+  )
+
+
 
 let tras = TransitionMap.empty
     |> TransitionMap.add "scanright" [
@@ -66,25 +126,35 @@ let to_transitions json_transitions: transitions = json_transitions
             |> (fun f a b c -> f a c b) TransitionMap.add state_from tras
       ) (TransitionMap.empty: transitions)
 
-let create_tm (json: Yojson.Basic.t) = {
-  name = member "name" json
+let create_tm_status (def: turing_machine_definition) (given_tape: string) = 
+  let tape = Array.make tape_size def.blank in
+  String.iteri (fun i c -> Array.set tape i (Char.escaped c)) given_tape;
+  {
+    state = def.initial;
+    head = 0;
+    tape = tape
+  }
+
+(* JSONデータを turing_machine に変換する *)
+let create_tm (tape: string) (json: Yojson.Basic.t) =
+  let blank   = member "blank" json   |> to_string in
+  let initial = member "initial" json |> to_string in {
+  name        = member "name" json
     |> to_string;
-  alphabet = member "alphabet" json
+  alphabet    = member "alphabet" json
     |> to_list
     |> List.map to_string;
-  blank = member "blank" json
-    |> to_string;
-  states = member "states" json
+  blank       = blank;
+  states      = member "states" json
     |> to_list
     |> List.map to_string;
-  initial = member "initial" json
-    |> to_string;
-  finals = member "finals" json
+  initial     = initial;
+  finals      = member "finals" json
     |> to_list
     |> List.map to_string;
   transitions = member "transitions" json
-    |> to_transitions
-}
+    |> to_transitions;
+  } |> (fun def -> { definition = def; status = create_tm_status def tape })
 
 (* 文字列 t に 文字列 s を n 回連結して返す *)
 let rec repeat_string (s: string) (n: int) (t: string) = match n with
@@ -100,14 +170,10 @@ let stringify_list (ss: string list) = List.fold_left (
 let print_list_with_prefix prefix list = 
   print_endline (prefix ^ ": " ^  "[" ^ (stringify_list list) ^ "]")
 
-let stringify_transition from_state transition =
-  Printf.sprintf "(%s, %s) -> (%s, %s, %s)"
-    from_state transition.read
-    transition.to_state transition.write transition.action
 
-let print_tm_name (tm: turing_machine) = 
+let print_tm_name (tm: turing_machine_definition) = 
   let len = String.length tm.name in
-  let width = len |> (fun a b -> a + b) 4 |> max 78 in
+  let width = len |> (fun a b -> a + b) 4 |> max (print_width - 2) in
   let wr = width / 2 in
   let wl = width - wr in
   let lenr = len / 2 in
@@ -118,19 +184,19 @@ let print_tm_name (tm: turing_machine) =
     (repeat_string "*" (width + 2) "")
   ]
 
-let print_tm_alphabet (tm: turing_machine) =
+let print_tm_alphabet (tm: turing_machine_definition) =
   print_list_with_prefix "Alphabet" tm.alphabet
 
-let print_tm_states (tm: turing_machine) =
+let print_tm_states (tm: turing_machine_definition) =
   print_list_with_prefix "States" tm.states
 
-let print_tm_initial (tm: turing_machine) =
+let print_tm_initial (tm: turing_machine_definition) =
   print_endline ("Initial: " ^ tm.initial)
 
-let print_tm_finals (tm: turing_machine) =
+let print_tm_finals (tm: turing_machine_definition) =
   print_list_with_prefix "Finals" tm.finals
   
-let print_tm_transition (tm: turing_machine) =
+let print_tm_transition (tm: turing_machine_definition) =
   TransitionMap.iter (fun from_state transition_list ->
     List.iter (fun transition ->
       print_endline (stringify_transition from_state transition)
@@ -139,14 +205,22 @@ let print_tm_transition (tm: turing_machine) =
   
 
 let print_tm_prologue (tm: turing_machine) = 
-  List.iter (fun f -> f tm) [
+  List.iter (fun f -> f tm.definition) [
     print_tm_name;
     print_tm_alphabet;
     print_tm_states;
     print_tm_initial;
     print_tm_finals;
     print_tm_transition
-  ]
+  ]; print_endline (repeat_string "*" print_width "");
+  tm
+
+(* 定義 def と初期状態 status を受け取り, 終状態を返す *)
+let rec go_transition def status =
+  match (get_next_staus def status) with
+    | None            -> status
+    | Some new_status -> go_transition def new_status
+
 
 
 (* ch から1行読み取り, リストに入れて返す. EOF に達している場合は空のリストを返す. *)
@@ -181,17 +255,24 @@ let json_from_path path = path
   (* ここでJSONパース *)
   |> Yojson.Safe.from_string
 
-let _ = if argv_len < 2 then (
+let _ = if argv_len < 3 then (
   (* usage 表示 *)
   argv_list
     |> List.hd
-    |> Printf.printf "usage: %s [some file]\n"
+    |> Printf.printf "usage: %s [JSON definition file] [tape]\n"
 ) else (
   (* argv[1] の中身を表示 *)
-  json_from_path (List.hd (List.tl argv_list))
+  let rest = List.tl argv_list in
+  let path = List.hd rest in
+  let tape = List.hd (List.tl rest) in
+  json_from_path path
     |> Yojson.Safe.to_basic
-    |> create_tm
+    |> create_tm tape
     |> print_tm_prologue
-    (* |> (fun tm -> print_endline tm.initial) *)
+    |> (fun tm -> go_transition tm.definition tm.status)
+    |> (fun s ->
+      Printf.printf "[%s]\ndone.\n" (stringify_tm_tape s)
+    )
+
 )
 
