@@ -1,17 +1,17 @@
 {
 	"name" : "error_through_to_the_left",
-	"alphabet": [ "1", ".", "-", "=" ],
+	"alphabet": [ "r", ".", "l" ],
 	"blank" : ".",
 	"states" : [ "go_right", "go_left", "HALT" ],
 	"initial" : "go_right",
 	"finals" : [ "HALT" ],
 	"transitions" : {
 	"go_right": [
-	{ "read" : "1", "to_state": "go_right", "write": "=", "action": "RIGHT"},
-	{ "read" : "=", "to_state": "go_left", "write": ".", "action": "LEFT"}
+	{ "read" : "r", "to_state": "go_right", "write": "l", "action": "RIGHT"},
+	{ "read" : "l", "to_state": "go_left", "write": ".", "action": "LEFT"}
 	],
 	"go_left": [
-	{ "read" : "=", "to_state": "go_left", "write": "=", "action": "LEFT"},
+	{ "read" : "l", "to_state": "go_left", "write": "l", "action": "LEFT"},
 	{ "read" : ".", "to_state": "HALT" , "write": ".", "action": "LEFT"}
 	]
 	}

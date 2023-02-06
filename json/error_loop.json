@@ -1,0 +1,20 @@
+{
+	"name" : "error_loop",
+	"alphabet": [ "r", ".", "-" ],
+	"blank" : ".",
+	"states" : [ "go_right", "go_left", "HALT" ],
+	"initial" : "go_left",
+	"finals" : [ "HALT" ],
+	"transitions" : {
+	"go_right": [
+	{ "read" : "-", "to_state": "go_right", "write": "-", "action": "RIGHT"},
+	{ "read" : "r", "to_state": "go_left", "write": "r", "action": "LEFT"},
+	{ "read" : ".", "to_state": "HALT" , "write": ".", "action": "LEFT"}
+],
+	"go_left": [
+	{ "read" : "-", "to_state": "go_left", "write": "-", "action": "LEFT"},
+	{ "read" : "r", "to_state": "go_right", "write": "r", "action": "RIGHT"},
+	{ "read" : ".", "to_state": "HALT" , "write": ".", "action": "LEFT"}
+	]
+	}
+}

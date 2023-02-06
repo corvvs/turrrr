@@ -12,8 +12,17 @@ Perform subtraction.
 ## error_through_to_the_left
 
 Error pattern penetrating to the left.  
-Program moves to the right while passing through 1 and to the left when it hits =.
+Program moves to the right while passing through "r" and to the left when it hits "l".
 
 ```
-./ft_turing json/error_through_to_the_left.json "11111="
+./ft_turing json/error_through_to_the_left.json "rrrrrl"
+```
+
+## error_loop
+
+Infinite looping error pattern  
+r changes the direction in which it moves.
+
+```
+./ft_turing json/error_loop.json "r-----r"
 ```
