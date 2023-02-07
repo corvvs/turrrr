@@ -1,0 +1,21 @@
+{
+	"name" : "error_through_to_the_left",
+	"alphabet": [ "s", ".", "g" ],
+	"blank" : ".",
+	"states" : [ "go", "create", "back", "HALT" ],
+	"initial" : "go",
+	"finals" : [ "HALT" ],
+	"transitions" : {
+	"go": [
+	{ "read" : "s", "to_state": "create", "write": ".", "action": "RIGHT"},
+	{ "read" : "s", "to_state": "create", "write": ".", "action": "RIGHT"},
+	{ "read" : ".", "to_state": "go", "write": ".", "action": "HALT"}
+	],
+	"create": [
+	{ "read" : ".", "to_state": "back", "write": "s", "action": "RIGHT"}
+	],
+	"back": [
+	{ "read" : ".", "to_state": "go", "write": ".", "action": "LEFT"}
+	]
+	}
+}

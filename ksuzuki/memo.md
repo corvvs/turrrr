@@ -154,6 +154,48 @@ pdfにある以下のような部分
   - 動きを変えながら右側に進み続ける
 - 対応するトランジションがない
 
+## readエラーのパターン
+
+- name, alphabet, blank, states, initial, finals, transitionsのいずれかがない
+- あまりにも長いname（とりあえず100文字以内とする）
+- nameがリスト
+- alphabetがprintableでエスケープ文字ではないascii以外のパターン（printableなasciiだけ対応すればいいと思う）
+  - 改行
+  - ひらがな
+  - \
+- alphabetがかぶってる（これを許容する場合、リストの数を気にする必要がある）
+- alphabetがリストではない
+- alphabetの一つが1文字ではない
+- alphabetが空
+- blankがリスト
+- blankがalphabetの一部ではない
+- statusがリストではない
+- statusが空
+- あまりにも長いstatus
+- あまりにも多いstatus
+- statusの中身がかぶっている
+- statusがprintableなascii以外のパターン（printableなasciiだけ対応すればいいと思う）
+- initialがリスト
+- blankがstatusの一部ではない
+- finalsがリストではない
+- finalsが空
+- finalsがstatusの部分集合ではない
+- finalsの中身がかぶっている
+- transitionsの対称の状態がstatusにない
+- transitionsのreadがalphabetにない
+- transitionsのto_stateがstatusにない
+- transitionsのwriteがalphabetにない
+- transitionsのactionがLEFTかRIGHT以外
+- transitionsのread, to_state, write, actionのいずれかがない
+- transitionsの中身がかぶっている
+- テープにblankが混じっている
+- 長すぎるテープ
+
+## 特殊だけどOKパターン
+
+- transitionsがない
+
+
 ## 改めてやること
 
 - エラーチェック

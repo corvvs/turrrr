@@ -1,0 +1,15 @@
+{
+	"name" : "error_through_to_the_left",
+	"alphabet": [ "s", ".", "g" ],
+	"blank" : ".",
+	"states" : [ "go_right", "HALT" ],
+	"initial" : "go_right",
+	"finals" : [ "HALT" ],
+	"transitions" : {
+	"go_right": [
+	{ "read" : "s", "to_state": "go_right", "write": ".", "action": "RIGHT"},
+	{ "read" : ".", "to_state": "go_right", "write": ".", "action": "RIGHT"},
+	{ "read" : "l", "to_state": "go_right", "write": ".", "action": "HALT"}
+	]
+	}
+}
