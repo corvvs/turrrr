@@ -171,12 +171,12 @@ pdfにある以下のような部分
 - blankがalphabetの一部ではない
 - statusがリストではない
 - statusが空
-- あまりにも長いstatus
-- あまりにも多いstatus
+- あまりにも長いstatus（とりあえず100文字以内とする）
+- あまりにも多いstatus（とりあえず100個とする）（テスト未作成）
 - statusの中身がかぶっている
 - statusがprintableなascii以外のパターン（printableなasciiだけ対応すればいいと思う）
 - initialがリスト
-- blankがstatusの一部ではない
+- initialがstatusの一部ではない
 - finalsがリストではない
 - finalsが空
 - finalsがstatusの部分集合ではない
@@ -189,7 +189,7 @@ pdfにある以下のような部分
 - transitionsのread, to_state, write, actionのいずれかがない
 - transitionsの中身がかぶっている
 - テープにblankが混じっている
-- 長すぎるテープ
+- 長すぎるテープ（とりあえず100文字以内とする）
 
 ## 特殊だけどOKパターン
 
