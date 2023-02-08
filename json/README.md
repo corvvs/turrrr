@@ -9,6 +9,14 @@ Perform subtraction.
 ./ft_turing json/unary_sub.json "111-11="
 ```
 
+## unary_add
+
+A machine that can compute unary additions.
+
+```
+./ft_turing json/unary_add.json "111+11="
+```
+
 ## with_no_transitions
 
 Pattern with no transitions
