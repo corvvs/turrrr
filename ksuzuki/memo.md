@@ -76,6 +76,64 @@ yojsonを入れた後、ocamlfindをopamで入れなおした
 opam install ocamlfind
 ```
 
+### ワカモレ環境構築
+
+brewのinstall
+
+https://scrapbox.io/42tokyo-42cursus/Install_Valgrind_to_Guacamole_feat._unlimish
+
+```
+curl -fsSL https://rawgit.com/kube/42homebrew/master/install.sh | zsh && source ~/.zshrc
+```
+
+brewでopamのinstall
+
+https://zenn.dev/hoddy3190/articles/4b7347ecd7ba59
+
+```
+brew install opam
+```
+
+失敗
+
+```
+brew upgrade wget
+```
+
+wgetがないといわれる
+
+```
+brew install wget
+```
+
+なんかの依存パッケージがダウンロードできなかった
+
+```
+brew install opam
+```
+
+なぜかいけてしまった。  
+多分上の色々で失敗している仮定で必要なものが入ったのかも（もしくは通信状況の問題か）
+
+```
+opam init
+```
+
+失敗
+
+```
+brew install wget
+```
+
+なぜかいけた
+
+```
+opam init
+```
+
+これで完了
+
+
 ## OCaml入門
 
 とりあえず以下をやる

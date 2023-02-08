@@ -22,7 +22,11 @@ fclean: clean
 re: fclean all
 
 install:
-	opam install ocamlfind
-	opam install yojson
+	opam install -y ocamlfind
+	opam install -y yojson
+
+uninstall:
+	opam uninstall -y ocamlfind
+	opam uninstall -y yojson
 
 .PHONY: all clean fclean re format
