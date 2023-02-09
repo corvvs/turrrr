@@ -5,13 +5,15 @@ PACKAGE = yojson
 all: $(TARGET)
 
 $(TARGET) : $(OBJS)
-	ocamlfind ocamlc -o $(TARGET) -package $(PACKAGE) -linkpkg -g $(OBJS)
+	eval $$(opam env) && ocamlfind ocamlc -o $(TARGET) -package $(PACKAGE) -linkpkg -g $(OBJS)
 
 %.cmi : %.mli
-	ocamlfind ocamlc -c -package $(PACKAGE) -linkpkg -g $<
+	make install
+	eval $$(opam env) && ocamlfind ocamlc -c -package $(PACKAGE) -linkpkg -g $<
 
 %.cmo : %.ml
-	ocamlfind ocamlc -c -package $(PACKAGE) -linkpkg -g $<
+	make install
+	eval $$(opam env) && ocamlfind ocamlc -c -package $(PACKAGE) -linkpkg -g $<
 
 clean:
 	rm -rf src/*.cmi src/*.cmo

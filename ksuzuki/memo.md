@@ -230,7 +230,7 @@ pdfにある以下のような部分
 - statusがリストではない
 - statusが空
 - あまりにも長いstatus（とりあえず100文字以内とする）
-- あまりにも多いstatus（とりあえず100個とする）（テスト未作成）
+- あまりにも多いstatus（とりあえず2000個とする）（テスト未作成）
 - statusの中身がかぶっている
 - statusがprintableなascii以外のパターン（printableなasciiだけ対応すればいいと思う）
 - initialがリスト
