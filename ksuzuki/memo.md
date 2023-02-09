@@ -278,3 +278,12 @@ pdfにある以下のような部分
   - https://www.fos.kuis.kyoto-u.ac.jp/~igarashi/OCaml/
 - 各生成ファイルの説明: https://ocaml.jp/?Chapter%208%20%E3%83%90%E3%83%83%E3%83%81%E3%82%B3%E3%83%B3%E3%83%91%E3%82%A4%E3%83%A9%20%28ocamlc%29
 - dependについて: http://exlight.net/devel/make/depend.html
+
+## 5つめのマシンについて
+
+- 1, ., +, =のみをアルファベットに
+- r, lでRIGHT, LEFT,
+- statusはA,B,Hの3つ
+- blankは指定不可（.に）
+- finalsも指定不可（Hに）
+- これでも、2status * 4read * 3to_state * 4write * 2action = 192通りの状態がある
