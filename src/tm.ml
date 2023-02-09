@@ -265,14 +265,17 @@ let _ = if argv_len < 3 then (
   let rest = List.tl argv_list in
   let path = List.hd rest in
   let tape = List.hd (List.tl rest) in
-  json_from_path path
-    |> Yojson.Safe.to_basic
-    |> create_tm tape
-    |> print_tm_prologue
-    |> (fun tm -> go_transition tm.definition tm.status)
-    |> (fun s ->
-      Printf.printf "[%s]\ndone.\n" (stringify_tm_tape s)
-    )
-
+  try (
+    json_from_path path
+      |> Yojson.Safe.to_basic
+      |> create_tm tape
+      |> print_tm_prologue
+      |> (fun tm -> go_transition tm.definition tm.status)
+      |> (fun s ->
+        Printf.printf "[%s]\ndone.\n" (stringify_tm_tape s)
+      )
+  ) with
+    | e -> let msg = Printexc.to_string e and stack = Printexc.get_backtrace () in
+      (Printf.fprintf stderr "%s%s\n" msg stack; exit 1)
 )
 
