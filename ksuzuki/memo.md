@@ -76,6 +76,64 @@ yojsonを入れた後、ocamlfindをopamで入れなおした
 opam install ocamlfind
 ```
 
+### ワカモレ環境構築
+
+brewのinstall
+
+https://scrapbox.io/42tokyo-42cursus/Install_Valgrind_to_Guacamole_feat._unlimish
+
+```
+curl -fsSL https://rawgit.com/kube/42homebrew/master/install.sh | zsh && source ~/.zshrc
+```
+
+brewでopamのinstall
+
+https://zenn.dev/hoddy3190/articles/4b7347ecd7ba59
+
+```
+brew install opam
+```
+
+失敗
+
+```
+brew upgrade wget
+```
+
+wgetがないといわれる
+
+```
+brew install wget
+```
+
+なんかの依存パッケージがダウンロードできなかった
+
+```
+brew install opam
+```
+
+なぜかいけてしまった。  
+多分上の色々で失敗している仮定で必要なものが入ったのかも（もしくは通信状況の問題か）
+
+```
+opam init
+```
+
+失敗
+
+```
+brew install wget
+```
+
+なぜかいけた
+
+```
+opam init
+```
+
+これで完了
+
+
 ## OCaml入門
 
 とりあえず以下をやる
@@ -208,3 +266,24 @@ pdfにある以下のような部分
   - （何もない環境でもmakeできることを確認する仮想環境の作製）
 - ボーナス
 - （テスターの作成）
+
+## Makefile
+
+### 参考になったサイト
+
+- オプション: https://ocaml.jp/refman/ch08s02.html
+- ocamlfindについて: https://ocaml-tutorial.org/ja/compiling_ocaml_projects
+- makefile参考
+  - https://ocaml.jp/archive/ocaml-manual-3.06-ja/manual027.html
+  - https://www.fos.kuis.kyoto-u.ac.jp/~igarashi/OCaml/
+- 各生成ファイルの説明: https://ocaml.jp/?Chapter%208%20%E3%83%90%E3%83%83%E3%83%81%E3%82%B3%E3%83%B3%E3%83%91%E3%82%A4%E3%83%A9%20%28ocamlc%29
+- dependについて: http://exlight.net/devel/make/depend.html
+
+## 5つめのマシンについて
+
+- 1, ., +, =のみをアルファベットに
+- r, lでRIGHT, LEFT,
+- statusはA,B,Hの3つ
+- blankは指定不可（.に）
+- finalsも指定不可（Hに）
+- これでも、2status * 4read * 3to_state * 4write * 2action = 192通りの状態がある

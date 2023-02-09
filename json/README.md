@@ -17,6 +17,31 @@ A machine that can compute unary additions.
 ./ft_turing json/unary_add.json "111+11="
 ```
 
+## palindrome
+
+Determine if it is a palindrome.  
+The characters that can be used are a, b, c
+
+```
+./ft_turing json/palindrome.json "aabbccbbaa"
+```
+
+## zero_one
+
+Determine if it is in the form of 0^n1^n.
+
+```
+./ft_turing json/zero_one.json "0000011111"
+```
+
+## even_zero
+
+Determine if it is in the form of 0^2n.
+
+```
+./ft_turing json/even_zero.json "0000"
+```
+
 ## with_no_transitions
 
 Pattern with no transitions

@@ -1,0 +1,176 @@
+{
+	"name" : "palindrome",
+	"alphabet": [ ".", "a", "b", "c", "y", "n" ],
+	"blank" : ".",
+	"states" : [ "scan",
+		"right_a", "right_b", "right_c",
+		"scan_a", "scan_b", "scan_c",
+		"write_a", "write_b", "write_c",
+		"del",
+		"left_a", "left_b", "left_c",
+		"fail_a", "fail_b", "fail_c", 
+		"yes_right", "yes_save", "yes",
+		"yes_a", "yes_b", "yes_c",
+		"no_right", "no_one_right", "no_save", "no",
+		"no_a", "no_b", "no_c",
+		"HALT" ],
+	"initial" : "scan",
+	"finals" : [ "HALT" ],
+	"transitions" : {
+	"scan": [
+	{ "read" : ".", "to_state": "yes_save", "write": ".", "action": "RIGHT"},
+	{ "read" : "a", "to_state": "right_a", "write": ".", "action": "RIGHT"},
+	{ "read" : "b", "to_state": "right_b", "write": ".", "action": "RIGHT"},
+	{ "read" : "c", "to_state": "right_c", "write": ".", "action": "RIGHT"}
+	],
+	"right_a": [
+	{ "read" : ".", "to_state": "scan_a", "write": ".", "action": "LEFT"},
+	{ "read" : "a", "to_state": "right_a", "write": "a", "action": "RIGHT"},
+	{ "read" : "b", "to_state": "right_a", "write": "b", "action": "RIGHT"},
+	{ "read" : "c", "to_state": "right_a", "write": "c", "action": "RIGHT"}
+	],
+	"right_b": [
+	{ "read" : ".", "to_state": "scan_b", "write": ".", "action": "LEFT"},
+	{ "read" : "a", "to_state": "right_b", "write": "a", "action": "RIGHT"},
+	{ "read" : "b", "to_state": "right_b", "write": "b", "action": "RIGHT"},
+	{ "read" : "c", "to_state": "right_b", "write": "c", "action": "RIGHT"}
+	],
+	"right_c": [
+	{ "read" : ".", "to_state": "scan_c", "write": ".", "action": "LEFT"},
+	{ "read" : "a", "to_state": "right_c", "write": "a", "action": "RIGHT"},
+	{ "read" : "b", "to_state": "right_c", "write": "b", "action": "RIGHT"},
+	{ "read" : "c", "to_state": "right_c", "write": "c", "action": "RIGHT"}
+	],
+	"scan_a": [
+	{ "read" : ".", "to_state": "yes_right", "write": "a", "action": "RIGHT"},
+	{ "read" : "a", "to_state": "write_a", "write": "a", "action": "RIGHT"},
+	{ "read" : "b", "to_state": "fail_a", "write": "b", "action": "LEFT"},
+	{ "read" : "c", "to_state": "fail_a", "write": "c", "action": "LEFT"}
+	],
+	"scan_b": [
+	{ "read" : ".", "to_state": "yes_right", "write": "b", "action": "RIGHT"},
+	{ "read" : "a", "to_state": "fail_b", "write": "a", "action": "LEFT"},
+	{ "read" : "b", "to_state": "write_b", "write": "b", "action": "RIGHT"},
+	{ "read" : "c", "to_state": "fail_b", "write": "c", "action": "LEFT"}
+	],
+	"scan_c": [
+	{ "read" : ".", "to_state": "yes_right", "write": "c", "action": "RIGHT"},
+	{ "read" : "a", "to_state": "fail_c", "write": "a", "action": "LEFT"},
+	{ "read" : "b", "to_state": "fail_c", "write": "b", "action": "LEFT"},
+	{ "read" : "c", "to_state": "write_c", "write": "c", "action": "RIGHT"}
+	],
+	"write_a": [
+	{ "read" : ".", "to_state": "del", "write": "a", "action": "LEFT"},
+	{ "read" : "a", "to_state": "write_a", "write": "a", "action": "RIGHT"},
+	{ "read" : "b", "to_state": "write_a", "write": "b", "action": "RIGHT"},
+	{ "read" : "c", "to_state": "write_a", "write": "c", "action": "RIGHT"}
+	],
+	"write_b": [
+	{ "read" : ".", "to_state": "del", "write": "b", "action": "LEFT"},
+	{ "read" : "a", "to_state": "write_a", "write": "a", "action": "RIGHT"},
+	{ "read" : "b", "to_state": "write_a", "write": "b", "action": "RIGHT"},
+	{ "read" : "c", "to_state": "write_a", "write": "c", "action": "RIGHT"}
+	],
+	"write_c": [
+	{ "read" : ".", "to_state": "del", "write": "c", "action": "LEFT"},
+	{ "read" : "a", "to_state": "write_a", "write": "a", "action": "RIGHT"},
+	{ "read" : "b", "to_state": "write_a", "write": "b", "action": "RIGHT"},
+	{ "read" : "c", "to_state": "write_a", "write": "c", "action": "RIGHT"}
+	],
+	"del": [
+	{ "read" : "a", "to_state": "left_a", "write": ".", "action": "LEFT"},
+	{ "read" : "b", "to_state": "left_b", "write": ".", "action": "LEFT"},
+	{ "read" : "c", "to_state": "left_c", "write": ".", "action": "LEFT"}
+	],
+	"left_a": [
+	{ "read" : ".", "to_state": "scan", "write": "a", "action": "RIGHT"},
+	{ "read" : "a", "to_state": "left_a", "write": "a", "action": "LEFT"},
+	{ "read" : "b", "to_state": "left_a", "write": "b", "action": "LEFT"},
+	{ "read" : "c", "to_state": "left_a", "write": "c", "action": "LEFT"}
+	],
+	"left_b": [
+	{ "read" : ".", "to_state": "scan", "write": "b", "action": "RIGHT"},
+	{ "read" : "a", "to_state": "left_b", "write": "a", "action": "LEFT"},
+	{ "read" : "b", "to_state": "left_b", "write": "b", "action": "LEFT"},
+	{ "read" : "c", "to_state": "left_b", "write": "c", "action": "LEFT"}
+	],
+	"left_c": [
+	{ "read" : ".", "to_state": "scan", "write": "c", "action": "RIGHT"},
+	{ "read" : "a", "to_state": "left_c", "write": "a", "action": "LEFT"},
+	{ "read" : "b", "to_state": "left_c", "write": "b", "action": "LEFT"},
+	{ "read" : "c", "to_state": "left_c", "write": "c", "action": "LEFT"}
+	],
+	"fail_a": [
+	{ "read" : ".", "to_state": "no_right", "write": "a", "action": "RIGHT"},
+	{ "read" : "a", "to_state": "fail_a", "write": "a", "action": "LEFT"},
+	{ "read" : "b", "to_state": "fail_a", "write": "b", "action": "LEFT"},
+	{ "read" : "c", "to_state": "fail_a", "write": "c", "action": "LEFT"}
+	],
+	"fail_b": [
+	{ "read" : ".", "to_state": "no_right", "write": "b", "action": "RIGHT"},
+	{ "read" : "a", "to_state": "fail_b", "write": "a", "action": "LEFT"},
+	{ "read" : "b", "to_state": "fail_b", "write": "b", "action": "LEFT"},
+	{ "read" : "c", "to_state": "fail_b", "write": "c", "action": "LEFT"}
+	],
+	"fail_c": [
+	{ "read" : ".", "to_state": "no_right", "write": "c", "action": "RIGHT"},
+	{ "read" : "a", "to_state": "fail_c", "write": "a", "action": "LEFT"},
+	{ "read" : "b", "to_state": "fail_c", "write": "b", "action": "LEFT"},
+	{ "read" : "c", "to_state": "fail_c", "write": "c", "action": "LEFT"}
+	],
+	"yes_right": [
+	{ "read" : ".", "to_state": "yes_save", "write": ".", "action": "RIGHT"},
+	{ "read" : "a", "to_state": "yes_right", "write": "a", "action": "RIGHT"},
+	{ "read" : "b", "to_state": "yes_right", "write": "b", "action": "RIGHT"},
+	{ "read" : "c", "to_state": "yes_right", "write": "c", "action": "RIGHT"}
+	],
+	"yes_save": [
+	{ "read" : ".", "to_state": "yes", "write": ".", "action": "LEFT"},
+	{ "read" : "a", "to_state": "yes_a", "write": ".", "action": "LEFT"},
+	{ "read" : "b", "to_state": "yes_b", "write": ".", "action": "LEFT"},
+	{ "read" : "c", "to_state": "yes_c", "write": ".", "action": "LEFT"}
+	],
+	"yes": [
+	{ "read" : ".", "to_state": "HALT", "write": "y", "action": "RIGHT"}
+	],
+	"yes_a": [
+	{ "read" : ".", "to_state": "yes_right", "write": "a", "action": "RIGHT"}
+	],
+	"yes_b": [
+	{ "read" : ".", "to_state": "yes_right", "write": "b", "action": "RIGHT"}
+	],
+	"yes_c": [
+	{ "read" : ".", "to_state": "yes_right", "write": "c", "action": "RIGHT"}
+	],
+	"no_right": [
+	{ "read" : ".", "to_state": "no_save", "write": ".", "action": "RIGHT"},
+	{ "read" : "a", "to_state": "no_right", "write": "a", "action": "RIGHT"},
+	{ "read" : "b", "to_state": "no_right", "write": "b", "action": "RIGHT"},
+	{ "read" : "c", "to_state": "no_right", "write": "c", "action": "RIGHT"}
+	],
+	"no_one_right": [
+	{ "read" : ".", "to_state": "no_save", "write": ".", "action": "RIGHT"},
+	{ "read" : "a", "to_state": "no_save", "write": ".", "action": "RIGHT"},
+	{ "read" : "b", "to_state": "no_save", "write": ".", "action": "RIGHT"},
+	{ "read" : "c", "to_state": "no_save", "write": ".", "action": "RIGHT"}
+	],
+	"no_save": [
+	{ "read" : ".", "to_state": "no", "write": ".", "action": "LEFT"},
+	{ "read" : "a", "to_state": "no_a", "write": "a", "action": "LEFT"},
+	{ "read" : "b", "to_state": "no_b", "write": "b", "action": "LEFT"},
+	{ "read" : "c", "to_state": "no_c", "write": "c", "action": "LEFT"}
+	],
+	"no": [
+	{ "read" : ".", "to_state": "HALT", "write": "n", "action": "RIGHT"}
+	],
+	"no_a": [
+	{ "read" : ".", "to_state": "no_one_right", "write": "a", "action": "RIGHT"}
+	],
+	"no_b": [
+	{ "read" : ".", "to_state": "no_one_right", "write": "b", "action": "RIGHT"}
+	],
+	"no_c": [
+	{ "read" : ".", "to_state": "no_one_right", "write": "c", "action": "RIGHT"}
+	]
+	}
+}
