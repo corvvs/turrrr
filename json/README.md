@@ -42,6 +42,15 @@ Determine if it is in the form of 0^2n.
 ./ft_turing json/even_zero.json "0000"
 ```
 
+## machine_make_machines
+
+The machine that makes the machine.  
+You can create unary_add.
+
+```
+./ft_turing json/machine_make_machines.json "[>A1A1R>A+A1R>A=B.L>B1H.R]111+11="
+```
+
 ## with_no_transitions
 
 Pattern with no transitions

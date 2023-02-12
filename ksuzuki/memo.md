@@ -287,3 +287,5 @@ pdfにある以下のような部分
 - blankは指定不可（.に）
 - finalsも指定不可（Hに）
 - これでも、2status * 4read * 3to_state * 4write * 2action = 192通りの状態がある
+- 指定の仕方
+  - [>A1A1R>A+A1R>A=B.L>B1H.R]111+11=
