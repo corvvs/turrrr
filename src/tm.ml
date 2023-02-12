@@ -58,7 +58,10 @@ let stringify_transition from_state transition =
 let print_tm_transition def status transition =
   Printf.printf "[%s] %s\n" (stringify_tm_tape status) (stringify_transition status.state transition)
 
+
 exception DefinitionError of string
+
+(* 静的エラーのチェックに使うpredicate関数群 *)
 
 (* 何を受け取っても unit を返す *)
 let absorp a = ()
@@ -80,6 +83,8 @@ let list_must_not_have_duplication error_message (list: string list) = list
 
 
 
+
+(* フィールドごとに静的エラーをチェックするvalidator関数群 *)
 
 let validate_tm_name str = str
   |> str_must_not_be_blank "name is empty"
@@ -139,8 +144,9 @@ let get_next_staus def status =
     None
   else (
     let char = Array.get status.tape status.head in
+    Printf.printf "char = |%s| %d\n" char (String.length char);
     let transition = TransitionMap.find status.state def.transitions
-      |> List.find (fun transition -> (transition.read = char)) in
+      |> List.find (fun transition -> (Printf.printf "read: |%s|\n" transition.read; transition.read = char)) in
     let new_tape = Array.copy status.tape in
       print_tm_transition def status transition;
       Array.set new_tape status.head transition.write;
@@ -349,15 +355,22 @@ let _ = if argv_len < 3 then (
   let path = List.hd rest in
   let tape = List.hd (List.tl rest) in
   try (
+    (* JSONファイルを読み取る *)
     json_from_path path
+      (* YoJson.Basic に変換 *)
       |> Yojson.Safe.to_basic
+      (* チューリングマシンに変換 *)
       |> create_tm tape
+      (* 初期表示 *)
       |> print_tm_prologue
+      (* マシンを駆動 *)
       |> (fun tm -> go_transition tm.definition tm.status)
+      (* 終状態を表示 *)
       |> (fun s ->
         Printf.printf "[%s]\ndone.\n" (stringify_tm_tape s)
       )
   ) with
+    (* 例外を補足してエラーを表示 *)
     | DefinitionError msg -> 
       (Printf.fprintf stderr "DefinitionError: %s\n" msg; exit 1)
     | e -> let msg = Printexc.to_string e and stack = Printexc.get_backtrace () in
