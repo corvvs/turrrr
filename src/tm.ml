@@ -58,42 +58,57 @@ let stringify_transition from_state transition =
 let print_tm_transition def status transition =
   Printf.printf "[%s] %s\n" (stringify_tm_tape status) (stringify_transition status.state transition)
 
-
 exception DefinitionError of string
 
-let validate_tm_name str =
-  if (String.length str) == 0 then raise (DefinitionError "name is empty") else str
+let str_must_not_be_blank error_message str = 
+  if (String.length str) == 0 then raise (DefinitionError error_message) else str
 
-let validate_tm_alphabet list: string list =
-  if (List.length list) == 0
-    then raise (DefinitionError "alphabet has no item")
-    else ();
-  List.iter
+let str_must_be_contained_in_list error_message list str =
+  if not (List.exists (fun al -> al = str) list) then raise (DefinitionError error_message ) else str
+
+let list_must_not_be_empty error_message list =
+  if (List.length list) == 0 then raise (DefinitionError error_message) else list
+
+(* 何を受け取っても unit を返す *)
+let absorp a = ()
+
+
+
+
+let validate_tm_name str = str
+  |> str_must_not_be_blank "name is empty"
+
+let validate_tm_alphabet list: string list = list
+  |> list_must_not_be_empty "alphabet has no item"
+  |> (List.iter
     (fun s ->
       if (String.length s) != 1
-        then raise (DefinitionError "alphabet is not a char")
+        then raise (DefinitionError ("alphabet is not a char: " ^ s))
         else ()
-    ) list;
-  list
+    )
+  ); list
 
-let validate_tm_blank str =
-  if (String.length str) == 0 then raise (DefinitionError "blank is empty") else str
+let validate_tm_blank alphabet str = str
+  |> str_must_not_be_blank "blank is empty"
+  |> str_must_be_contained_in_list ("`alphabet` has not contain `blank`: " ^ str) alphabet
 
-let validate_tm_blank str = str
+let validate_tm_states list: string list = list
+  |> list_must_not_be_empty "states has no item"
 
-let validate_tm_states list: string list =
-  if (List.length list) == 0
-    then raise (DefinitionError "states has no item")
-    else ();
-  list
+let validate_tm_initial states str = str
+  |> str_must_be_contained_in_list ("`states` has not contain `initial`: " ^ str) states
 
-let validate_tm_initial str = str
+let validate_tm_finals states (list: string list): string list = list
+  |> list_must_not_be_empty "finals has no item"
+  |> List.iter (fun str -> (str_must_be_contained_in_list ("`states` has not contain `final`: " ^ str) states str |> absorp)); list
 
-let validate_tm_finals list: string list =
-  if (List.length list) == 0
-    then raise (DefinitionError "finals has no item")
-    else ();
-  list
+
+let validate_tm_transitions (tras: transitions): transitions =
+  (* TransitionMap.iter (fun key to_states ->
+    print_endline key;
+    List.iter (fun to_state -> validate_tm_to_state) to_states;
+  ) tras; *)
+  tras
 
 (* 可能なら次の状態への遷移を行う *)
 (* definition と status を取る *)
@@ -172,29 +187,38 @@ let create_tm_status (def: turing_machine_definition) (given_tape: string) =
 
 (* JSONデータを turing_machine に変換する *)
 let create_tm (tape: string) (json: Yojson.Basic.t) =
-  let blank   = member "blank" json   |> to_string in
-  let initial = member "initial" json |> to_string in {
-  name        = member "name" json
+  let blank       = member "blank" json   |> to_string in
+  let initial     = member "initial" json |> to_string in
+  let name        = member "name" json
     |> to_string
-    |> validate_tm_name;
-  alphabet    = member "alphabet" json
+    |> validate_tm_name in
+  let alphabet    = member "alphabet" json
     |> to_list
     |> List.map to_string
-    |> validate_tm_alphabet;
-  blank       = blank
-    |> validate_tm_blank;
-  states      = member "states" json
+    |> validate_tm_alphabet in
+  let blank       = blank
+    |> validate_tm_blank alphabet in
+  let states      = member "states" json
     |> to_list
     |> List.map to_string
-    |> validate_tm_states;
-  initial     = initial
-    |> validate_tm_initial;
-  finals      = member "finals" json
+    |> validate_tm_states in
+  let initial     = initial
+    |> validate_tm_initial states in
+  let finals      = member "finals" json
     |> to_list
     |> List.map to_string
-    |> validate_tm_finals;
-  transitions = member "transitions" json
-    |> to_transitions;
+    |> validate_tm_finals states in
+  let transitions = member "transitions" json
+    |> to_transitions
+    |> validate_tm_transitions in
+  {
+    name = name;
+    alphabet = alphabet;
+    blank = blank;
+    states = states;
+    initial = initial;
+    finals = finals;
+    transitions = transitions
   } |> (fun def -> { definition = def; status = create_tm_status def tape })
 
 (* 文字列 t に 文字列 s を n 回連結して返す *)
@@ -319,6 +343,6 @@ let _ = if argv_len < 3 then (
     | DefinitionError msg -> 
       (Printf.fprintf stderr "DefinitionError: %s\n" msg; exit 1)
     | e -> let msg = Printexc.to_string e and stack = Printexc.get_backtrace () in
-      (Printf.fprintf stderr "%s\n%s\n" msg stack; exit 1)
+      (Printf.fprintf stderr "[generic error] %s\n%s\n" msg stack; exit 1)
 )
 
