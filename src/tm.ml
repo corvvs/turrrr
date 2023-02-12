@@ -196,7 +196,7 @@ let to_transitions json_transitions: transitions = json_transitions
 
 let create_tm_status (def: turing_machine_definition) (given_tape: string) = 
   let tape = Array.make tape_size def.blank in
-  String.iteri (fun i c -> Array.set tape i (Char.escaped c)) given_tape;
+  String.iteri (fun i c -> Array.set tape i (String.make 1 c)) given_tape;
   {
     state = def.initial;
     head = 0;
