@@ -55,10 +55,45 @@ let stringify_transition from_state transition =
     from_state transition.read
     transition.to_state transition.write transition.action
 
-
 let print_tm_transition def status transition =
   Printf.printf "[%s] %s\n" (stringify_tm_tape status) (stringify_transition status.state transition)
 
+
+exception DefinitionError of string
+
+let validate_tm_name str =
+  if (String.length str) == 0 then raise (DefinitionError "name is empty") else str
+
+let validate_tm_alphabet list: string list =
+  if (List.length list) == 0
+    then raise (DefinitionError "alphabet has no item")
+    else ();
+  List.iter
+    (fun s ->
+      if (String.length s) != 1
+        then raise (DefinitionError "alphabet is not a char")
+        else ()
+    ) list;
+  list
+
+let validate_tm_blank str =
+  if (String.length str) == 0 then raise (DefinitionError "blank is empty") else str
+
+let validate_tm_blank str = str
+
+let validate_tm_states list: string list =
+  if (List.length list) == 0
+    then raise (DefinitionError "states has no item")
+    else ();
+  list
+
+let validate_tm_initial str = str
+
+let validate_tm_finals list: string list =
+  if (List.length list) == 0
+    then raise (DefinitionError "finals has no item")
+    else ();
+  list
 
 (* 可能なら次の状態への遷移を行う *)
 (* definition と status を取る *)
@@ -140,18 +175,24 @@ let create_tm (tape: string) (json: Yojson.Basic.t) =
   let blank   = member "blank" json   |> to_string in
   let initial = member "initial" json |> to_string in {
   name        = member "name" json
-    |> to_string;
+    |> to_string
+    |> validate_tm_name;
   alphabet    = member "alphabet" json
     |> to_list
-    |> List.map to_string;
-  blank       = blank;
+    |> List.map to_string
+    |> validate_tm_alphabet;
+  blank       = blank
+    |> validate_tm_blank;
   states      = member "states" json
     |> to_list
-    |> List.map to_string;
-  initial     = initial;
+    |> List.map to_string
+    |> validate_tm_states;
+  initial     = initial
+    |> validate_tm_initial;
   finals      = member "finals" json
     |> to_list
-    |> List.map to_string;
+    |> List.map to_string
+    |> validate_tm_finals;
   transitions = member "transitions" json
     |> to_transitions;
   } |> (fun def -> { definition = def; status = create_tm_status def tape })
@@ -275,7 +316,9 @@ let _ = if argv_len < 3 then (
         Printf.printf "[%s]\ndone.\n" (stringify_tm_tape s)
       )
   ) with
+    | DefinitionError msg -> 
+      (Printf.fprintf stderr "DefinitionError: %s\n" msg; exit 1)
     | e -> let msg = Printexc.to_string e and stack = Printexc.get_backtrace () in
-      (Printf.fprintf stderr "%s%s\n" msg stack; exit 1)
+      (Printf.fprintf stderr "%s\n%s\n" msg stack; exit 1)
 )
 
