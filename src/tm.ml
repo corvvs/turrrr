@@ -60,6 +60,9 @@ let print_tm_transition def status transition =
 
 exception DefinitionError of string
 
+(* 何を受け取っても unit を返す *)
+let absorp a = ()
+
 let str_must_not_be_blank error_message str = 
   if (String.length str) == 0 then raise (DefinitionError error_message) else str
 
@@ -69,8 +72,11 @@ let str_must_be_contained_in_list error_message list str =
 let list_must_not_be_empty error_message list =
   if (List.length list) == 0 then raise (DefinitionError error_message) else list
 
-(* 何を受け取っても unit を返す *)
-let absorp a = ()
+let list_must_not_have_duplication error_message (list: string list) = list
+  |> List.sort compare
+  |> List.fold_left (fun s a -> if s = a then raise (DefinitionError error_message) else a) ""
+  |> absorp; list
+  
 
 
 
@@ -87,35 +93,37 @@ let validate_tm_alphabet list: string list = list
         else ()
     )
   ); list
+  |> list_must_not_have_duplication "detected duplication of `alphabet`"
 
 let validate_tm_blank alphabet str = str
   |> str_must_not_be_blank "blank is empty"
-  |> str_must_be_contained_in_list ("`alphabet` has not contain `blank`: " ^ str) alphabet
+  |> str_must_be_contained_in_list ("`alphabet` does not contain `blank`: " ^ str) alphabet
 
 let validate_tm_states list: string list = list
   |> list_must_not_be_empty "states has no item"
+  |> list_must_not_have_duplication "detected duplication of `states`"
 
 let validate_tm_initial states str = str
-  |> str_must_be_contained_in_list ("`states` has not contain `initial`: " ^ str) states
+  |> str_must_be_contained_in_list ("`states` does not contain `initial`: " ^ str) states
 
 let validate_tm_finals states (list: string list): string list = list
   |> list_must_not_be_empty "finals has no item"
-  |> List.iter (fun str -> (str_must_be_contained_in_list ("`states` has not contain `final`: " ^ str) states str |> absorp)); list
+  |> List.iter (fun str -> (str_must_be_contained_in_list ("`states` does not contain `final`: " ^ str) states str |> absorp)); list
+  |> list_must_not_have_duplication "detected duplication of `finals`"
 
 let validate_tm_to_state alphabet states to_state = to_state
-|> (fun ts -> str_must_be_contained_in_list ("`alphabet` has not contain `read`: " ^ ts.read) alphabet ts.read |> absorp; to_state)
-|> (fun ts -> str_must_be_contained_in_list ("`states` has not contain `to_state`: " ^ ts.to_state) states ts.to_state |> absorp; to_state)
-|> (fun ts -> str_must_be_contained_in_list ("`alphabet` has not contain `write`: " ^ ts.write) alphabet ts.write |> absorp; to_state)
-|> (fun ts -> if not (ts.action = "RIGHT" || ts.action = "LEFT") then raise (DefinitionError "!!!") else ts)
+|> (fun ts -> str_must_be_contained_in_list ("`alphabet` does not contain `read`: " ^ ts.read) alphabet ts.read |> absorp; to_state)
+|> (fun ts -> str_must_be_contained_in_list ("`states` does not contain `to_state`: " ^ ts.to_state) states ts.to_state |> absorp; to_state)
+|> (fun ts -> str_must_be_contained_in_list ("`alphabet` does not contain `write`: " ^ ts.write) alphabet ts.write |> absorp; to_state)
+|> (fun ts -> if not (ts.action = "RIGHT" || ts.action = "LEFT") then raise (DefinitionError ("action is neither LEFT nor RIGHT: " ^ ts.action)) else ts)
 
 let validate_tm_transitions alphabet states (tras: transitions): transitions = tras
   |> TransitionMap.iter (fun key to_states ->
-    print_endline key;
+    str_must_be_contained_in_list ("from-state does not contain `states`: " ^ key) states key |> absorp;
     List.iter (fun to_state -> (validate_tm_to_state alphabet states to_state) |> absorp) to_states;
     (* to_states の read に重複がないことをチェック *)
     List.map (fun a -> a.read) to_states
-      |> List.sort compare
-      |> List.fold_left (fun s a -> if s = a then raise (DefinitionError ("detected duplication of `read`: " ^ a)) else a) ""
+      |> list_must_not_have_duplication "detected duplication of `read`"
       |> absorp
   );
   tras
