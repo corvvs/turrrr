@@ -102,12 +102,22 @@ let validate_tm_finals states (list: string list): string list = list
   |> list_must_not_be_empty "finals has no item"
   |> List.iter (fun str -> (str_must_be_contained_in_list ("`states` has not contain `final`: " ^ str) states str |> absorp)); list
 
+let validate_tm_to_state alphabet states to_state = to_state
+|> (fun ts -> str_must_be_contained_in_list ("`alphabet` has not contain `read`: " ^ ts.read) alphabet ts.read |> absorp; to_state)
+|> (fun ts -> str_must_be_contained_in_list ("`states` has not contain `to_state`: " ^ ts.to_state) states ts.to_state |> absorp; to_state)
+|> (fun ts -> str_must_be_contained_in_list ("`alphabet` has not contain `write`: " ^ ts.write) alphabet ts.write |> absorp; to_state)
+|> (fun ts -> if not (ts.action = "RIGHT" || ts.action = "LEFT") then raise (DefinitionError "!!!") else ts)
 
-let validate_tm_transitions (tras: transitions): transitions =
-  (* TransitionMap.iter (fun key to_states ->
+let validate_tm_transitions alphabet states (tras: transitions): transitions = tras
+  |> TransitionMap.iter (fun key to_states ->
     print_endline key;
-    List.iter (fun to_state -> validate_tm_to_state) to_states;
-  ) tras; *)
+    List.iter (fun to_state -> (validate_tm_to_state alphabet states to_state) |> absorp) to_states;
+    (* to_states の read に重複がないことをチェック *)
+    List.map (fun a -> a.read) to_states
+      |> List.sort compare
+      |> List.fold_left (fun s a -> if s = a then raise (DefinitionError ("detected duplication of `read`: " ^ a)) else a) ""
+      |> absorp
+  );
   tras
 
 (* 可能なら次の状態への遷移を行う *)
@@ -210,7 +220,7 @@ let create_tm (tape: string) (json: Yojson.Basic.t) =
     |> validate_tm_finals states in
   let transitions = member "transitions" json
     |> to_transitions
-    |> validate_tm_transitions in
+    |> validate_tm_transitions alphabet states in
   {
     name = name;
     alphabet = alphabet;
