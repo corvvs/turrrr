@@ -8,8 +8,7 @@
 	"transitions" : {
 	"go_right": [
 	{ "read" : "s", "to_state": "go_right", "write": ".", "action": "RIGHT"},
-	{ "read" : ".", "to_state": "go_right", "write": ".", "action": "RIGHT"},
-	{ "read" : "l", "to_state": "go_right", "write": ".", "action": "HALT"}
+	{ "read" : ".", "to_state": "go_right", "write": ".", "action": "RIGHT"}
 	]
 	}
 }
