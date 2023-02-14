@@ -55,9 +55,92 @@ let stringify_transition from_state transition =
     from_state transition.read
     transition.to_state transition.write transition.action
 
-
 let print_tm_transition def status transition =
   Printf.printf "[%s] %s\n" (stringify_tm_tape status) (stringify_transition status.state transition)
+
+
+exception DefinitionError of string
+
+(* 静的エラーのチェックに使うpredicate関数群 *)
+
+(* 何を受け取っても unit を返す *)
+let absorp a = ()
+
+let str_must_not_be_blank error_message str = 
+  if (String.length str) == 0 then raise (DefinitionError error_message) else str
+
+let str_must_be_contained_in_list error_message list str =
+  if not (List.exists (fun al -> al = str) list) then raise (DefinitionError error_message ) else str
+
+let list_must_not_be_empty error_message list =
+  if (List.length list) == 0 then raise (DefinitionError error_message) else list
+
+let list_must_not_have_duplication error_message (list: string list) = list
+  |> List.sort compare
+  |> List.fold_left (fun s a -> if s = a then raise (DefinitionError error_message) else a) ""
+  |> absorp; list
+  
+
+
+
+
+(* フィールドごとに静的エラーをチェックするvalidator関数群 *)
+
+let validate_tm_name str = str
+  |> str_must_not_be_blank "name is empty"
+
+let validate_tm_alphabet list: string list = list
+  |> list_must_not_be_empty "alphabet has no item"
+  |> (List.iter
+    (fun s ->
+      if (String.length s) != 1
+        then raise (DefinitionError ("alphabet is not a char: " ^ s))
+        else ()
+    )
+  ); list
+  |> list_must_not_have_duplication "detected duplication of `alphabet`"
+
+let validate_tm_blank alphabet str = str
+  |> str_must_not_be_blank "blank is empty"
+  |> str_must_be_contained_in_list ("`alphabet` does not contain `blank`: " ^ str) alphabet
+
+let validate_tm_states list: string list = list
+  |> list_must_not_be_empty "states has no item"
+  |> list_must_not_have_duplication "detected duplication of `states`"
+
+let validate_tm_initial states str = str
+  |> str_must_be_contained_in_list ("`states` does not contain `initial`: " ^ str) states
+
+let validate_tm_finals states (list: string list): string list = list
+  |> list_must_not_be_empty "finals has no item"
+  |> List.iter (fun str -> (str_must_be_contained_in_list ("`states` does not contain `final`: " ^ str) states str |> absorp)); list
+  |> list_must_not_have_duplication "detected duplication of `finals`"
+
+let validate_tm_to_state alphabet states to_state = to_state
+|> (fun ts -> str_must_be_contained_in_list ("`alphabet` does not contain `read`: " ^ ts.read) alphabet ts.read |> absorp; to_state)
+|> (fun ts -> str_must_be_contained_in_list ("`states` does not contain `to_state`: " ^ ts.to_state) states ts.to_state |> absorp; to_state)
+|> (fun ts -> str_must_be_contained_in_list ("`alphabet` does not contain `write`: " ^ ts.write) alphabet ts.write |> absorp; to_state)
+|> (fun ts -> if not (ts.action = "RIGHT" || ts.action = "LEFT") then raise (DefinitionError ("action is neither LEFT nor RIGHT: " ^ ts.action)) else ts)
+
+let validate_tm_transitions alphabet states (tras: transitions): transitions = tras
+  |> TransitionMap.iter (fun key to_states ->
+    str_must_be_contained_in_list ("from-state does not contain `states`: " ^ key) states key |> absorp;
+    List.iter (fun to_state -> (validate_tm_to_state alphabet states to_state) |> absorp) to_states;
+    (* to_states の read に重複がないことをチェック *)
+    List.map (fun a -> a.read) to_states
+      |> list_must_not_have_duplication "detected duplication of `read`"
+      |> absorp
+  );
+  tras
+
+
+let validate_tm_tape (def: turing_machine_definition) (given_tape: string) = given_tape
+  |> String.iteri (fun i c ->
+      if (String.make 1 c) = def.blank then raise (DefinitionError "tape contains blank-char") else ()
+    ); given_tape
+  |> String.iteri (fun i c ->
+      str_must_be_contained_in_list ("tape contains non-alphabetic char") def.alphabet (String.make 1 c) |> absorp
+    ); given_tape
 
 
 (* 可能なら次の状態への遷移を行う *)
@@ -72,7 +155,7 @@ let get_next_staus def status =
   else (
     let char = Array.get status.tape status.head in
     let transition = TransitionMap.find status.state def.transitions
-      |> List.find (fun transition -> (transition.read = char)) in
+      |> List.find (fun transition -> transition.read = char) in
     let new_tape = Array.copy status.tape in
       print_tm_transition def status transition;
       Array.set new_tape status.head transition.write;
@@ -128,7 +211,7 @@ let to_transitions json_transitions: transitions = json_transitions
 
 let create_tm_status (def: turing_machine_definition) (given_tape: string) = 
   let tape = Array.make tape_size def.blank in
-  String.iteri (fun i c -> Array.set tape i (Char.escaped c)) given_tape;
+  String.iteri (fun i c -> Array.set tape i (String.make 1 c)) given_tape;
   {
     state = def.initial;
     head = 0;
@@ -137,24 +220,44 @@ let create_tm_status (def: turing_machine_definition) (given_tape: string) =
 
 (* JSONデータを turing_machine に変換する *)
 let create_tm (tape: string) (json: Yojson.Basic.t) =
-  let blank   = member "blank" json   |> to_string in
-  let initial = member "initial" json |> to_string in {
-  name        = member "name" json
-    |> to_string;
-  alphabet    = member "alphabet" json
+  let blank       = member "blank" json   |> to_string in
+  let initial     = member "initial" json |> to_string in
+  let name        = member "name" json
+    |> to_string
+    |> validate_tm_name in
+  let alphabet    = member "alphabet" json
     |> to_list
-    |> List.map to_string;
-  blank       = blank;
-  states      = member "states" json
+    |> List.map to_string
+    |> validate_tm_alphabet in
+  let blank       = blank
+    |> validate_tm_blank alphabet in
+  let states      = member "states" json
     |> to_list
-    |> List.map to_string;
-  initial     = initial;
-  finals      = member "finals" json
+    |> List.map to_string
+    |> validate_tm_states in
+  let initial     = initial
+    |> validate_tm_initial states in
+  let finals      = member "finals" json
     |> to_list
-    |> List.map to_string;
-  transitions = member "transitions" json
-    |> to_transitions;
-  } |> (fun def -> { definition = def; status = create_tm_status def tape })
+    |> List.map to_string
+    |> validate_tm_finals states in
+  let transitions = member "transitions" json
+    |> to_transitions
+    |> validate_tm_transitions alphabet states in
+  {
+    name = name;
+    alphabet = alphabet;
+    blank = blank;
+    states = states;
+    initial = initial;
+    finals = finals;
+    transitions = transitions
+  } |> (fun def -> {
+      definition = def;
+      status = tape
+        |> validate_tm_tape def
+        |> create_tm_status def
+    })
 
 (* 文字列 t に 文字列 s を n 回連結して返す *)
 let rec repeat_string (s: string) (n: int) (t: string) = match n with
@@ -265,14 +368,26 @@ let _ = if argv_len < 3 then (
   let rest = List.tl argv_list in
   let path = List.hd rest in
   let tape = List.hd (List.tl rest) in
-  json_from_path path
-    |> Yojson.Safe.to_basic
-    |> create_tm tape
-    |> print_tm_prologue
-    |> (fun tm -> go_transition tm.definition tm.status)
-    |> (fun s ->
-      Printf.printf "[%s]\ndone.\n" (stringify_tm_tape s)
-    )
-
+  try (
+    (* JSONファイルを読み取る *)
+    json_from_path path
+      (* YoJson.Basic に変換 *)
+      |> Yojson.Safe.to_basic
+      (* チューリングマシンに変換 *)
+      |> create_tm tape
+      (* 初期表示 *)
+      |> print_tm_prologue
+      (* マシンを駆動 *)
+      |> (fun tm -> go_transition tm.definition tm.status)
+      (* 終状態を表示 *)
+      |> (fun s ->
+        Printf.printf "[%s]\ndone.\n" (stringify_tm_tape s)
+      )
+  ) with
+    (* 例外を補足してエラーを表示 *)
+    | DefinitionError msg -> 
+      (Printf.fprintf stderr "DefinitionError: %s\n" msg; exit 1)
+    | e -> let msg = Printexc.to_string e and stack = Printexc.get_backtrace () in
+      (Printf.fprintf stderr "[generic error] %s\n%s\n" msg stack; exit 1)
 )
 

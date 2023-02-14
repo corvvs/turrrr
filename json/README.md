@@ -111,13 +111,6 @@ Elements name, alphabet, blank, states, initial, finals, transitions are require
 ./ft_turing json/error/error_read_without_required.json "111-11="
 ```
 
-## error_read_long_name
-
-Long name entry patterns.
-
-```
-./ft_turing json/error/error_read_long_name.json "111-11="
-```
 
 ## error_read_name_list
 
@@ -216,14 +209,6 @@ Pattern with no states list element.
 
 ```
 ./ft_turing json/error/error_read_states_no_element.json "111-11="
-```
-
-## error_read_long_status
-
-Long status entry patterns.
-
-```
-./ft_turing json/error/error_read_long_status.json "111-11="
 ```
 
 ## error_read_status_same
