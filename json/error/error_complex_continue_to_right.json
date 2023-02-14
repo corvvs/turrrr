@@ -7,9 +7,7 @@
 	"finals" : [ "HALT" ],
 	"transitions" : {
 	"go": [
-	{ "read" : "s", "to_state": "create", "write": ".", "action": "RIGHT"},
-	{ "read" : "s", "to_state": "create", "write": ".", "action": "RIGHT"},
-	{ "read" : ".", "to_state": "go", "write": ".", "action": "HALT"}
+	{ "read" : "s", "to_state": "create", "write": ".", "action": "RIGHT"}
 	],
 	"create": [
 	{ "read" : ".", "to_state": "back", "write": "s", "action": "RIGHT"}

@@ -202,7 +202,6 @@ Pattern with no states list element.
 ./ft_turing json/error/error_read_states_no_element.json "111-11="
 ```
 
-
 ## error_read_status_same
 
 Patterns with the same letter.
