@@ -133,6 +133,16 @@ let validate_tm_transitions alphabet states (tras: transitions): transitions = t
   );
   tras
 
+
+let validate_tm_tape (def: turing_machine_definition) (given_tape: string) = given_tape
+  |> String.iteri (fun i c ->
+      if (String.make 1 c) = def.blank then raise (DefinitionError "tape contains blank-char") else ()
+    ); given_tape
+  |> String.iteri (fun i c ->
+      str_must_be_contained_in_list ("tape contains non-alphabetic char") def.alphabet (String.make 1 c) |> absorp
+    ); given_tape
+
+
 (* 可能なら次の状態への遷移を行う *)
 (* definition と status を取る *)
 (* 現在状態がfinalsに含まれる場合, unitを返す *)
@@ -144,9 +154,8 @@ let get_next_staus def status =
     None
   else (
     let char = Array.get status.tape status.head in
-    Printf.printf "char = |%s| %d\n" char (String.length char);
     let transition = TransitionMap.find status.state def.transitions
-      |> List.find (fun transition -> (Printf.printf "read: |%s|\n" transition.read; transition.read = char)) in
+      |> List.find (fun transition -> transition.read = char) in
     let new_tape = Array.copy status.tape in
       print_tm_transition def status transition;
       Array.set new_tape status.head transition.write;
@@ -243,7 +252,12 @@ let create_tm (tape: string) (json: Yojson.Basic.t) =
     initial = initial;
     finals = finals;
     transitions = transitions
-  } |> (fun def -> { definition = def; status = create_tm_status def tape })
+  } |> (fun def -> {
+      definition = def;
+      status = tape
+        |> validate_tm_tape def
+        |> create_tm_status def
+    })
 
 (* 文字列 t に 文字列 s を n 回連結して返す *)
 let rec repeat_string (s: string) (n: int) (t: string) = match n with

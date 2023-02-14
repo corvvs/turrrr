@@ -265,11 +265,17 @@ let _ = if argv_len < 3 then (
   let rest = List.tl argv_list in
   let path = List.hd rest in
   let tape = List.hd (List.tl rest) in
+  (* JSONファイルから中身を読み取り *)
   json_from_path path
+    (* JSONに変換 *)
     |> Yojson.Safe.to_basic
+    (* チューリングマシン定義に変換 *)
     |> create_tm tape
+    (* 初期表示 *)
     |> print_tm_prologue
+    (* マシンを駆動 *)
     |> (fun tm -> go_transition tm.definition tm.status)
+    (* 終状態を表示 *)
     |> (fun s ->
       Printf.printf "[%s]\ndone.\n" (stringify_tm_tape s)
     )
