@@ -289,3 +289,85 @@ pdfにある以下のような部分
 - これでも、2status * 4read * 3to_state * 4write * 2action = 192通りの状態がある
 - 指定の仕方
   - [>A1A1R>A+A1R>A=B.L>B1H.R]111+11=
+
+## 計算時間について
+
+### unary_sub
+
+graphvizで作製した画像を確認すると
+- 最初のscanrightで、「.」「1」「-」のO(n)のループ
+- suboneで「1」のO(n)のループ
+- skipで「.」のO(n)のループ
+- suboneとskipを含むループがある
+
+……全部O(n)だが、suboneとskipは大きなループの中にある。  
+動くを見るとO(n^2)っぽいが、それを遷移から読み取るのは難しい
+
+### オーダー数の計算
+
+unary_subを見ていると、遷移から調べるのは難しそう。  
+やはり、ステップ数を単純に数えて、そこからオーダー数を考えるのがいいかもしれない。
+
+課題pdfより、オーダーのリストは以下
+- 1
+- log n
+- n
+- n log n
+- n^2
+- 2^n
+- n!
+
+テープの長さをnとして、実際のステップ数とこれらを比較する。
+
+#### 例
+
+unary_subの"111-11="について考える
+- n = 7, step = 23
+- O(1): 1
+- O(log n): 1.9 (底はe)
+- O(n): 7
+- O(n log n): 14
+- O(n^2): 49
+
+一番近いのはO(n log n)となる
+
+もう少し増やしてunary_subの"11111111-11111="について考える
+- n = 15, step = 82
+- O(1): 1
+- O(log n): 2.7 (底はe)
+- O(n): 15
+- O(n log n): 40
+- O(n^2): 225
+
+一番近いのはO(n log n)となる
+
+さらに増やす："11111111111111-1111111111="
+- n = 26, step = 258
+- O(1): 1
+- O(log n): 3.2 (底はe)
+- O(n): 26
+- O(n log n): 83
+- O(n^2): 676
+
+一番近いのはO(n log n)となる
+
+さらに増やす："11111111111111111111-111111111111111111="
+- n = 40, step = 744
+- O(1): 1
+- O(log n): 3.7 (底はe)
+- O(n): 40
+- O(n log n): 148
+- O(n^2): 1600
+
+一番近いのはO(n^2)となる
+
+## 時間計算量について改めて調べる
+
+- ここに書いてある参考書を読めばもしかしたら：https://qiita.com/drken/items/872ebc3a2b5caaa4a0d0
+- 結構詳しく書いてあるが時間計算量の求め方についてはのっていない：https://www.kurims.kyoto-u.ac.jp/~kawamura/keisanryo/enshu.pdf
+- チューリングマシンの、palindromeの時間計算量を計算していた。少し漠然とヒントになった気がする：http://edu.net.c.dendai.ac.jp/algorithm/2015/3/index.xhtml
+- チューリングマシンの遷移図について。これにならって遷移図を書き直す：http://web.sfc.keio.ac.jp/~hagino/mi17/05.pdf
+- 非決定性TMの話になってしまった：http://www.akita-pu.ac.jp/system/elect/ins/kusakari/japanese/teaching/InfoMath/2007/note/5.pdf
+- かなり色々詳しく載っている：https://www.hirasa.mgmt.waseda.ac.jp/lab/imc.pdf
+  - アルゴリズムにはその終了性が条件として入っている。そのため無限ループするような入力は、そもそもその要件を満たしていないのだからしょうがない、としてもいいかもしれない
+  - 一般にテープ全体をnとするのではなく、一部の対象を（ソートだったらそのソートする要素の個数とか）nとすることが多いらしい
