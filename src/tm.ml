@@ -318,20 +318,18 @@ let print_tm_prologue (tm: turing_machine) =
   ]; print_endline (repeat_string "*" print_width "");
   tm
 
-
-(* tapeの長さをはかる関数 *)
-let rec tape_length (tape, i, blank) =
-  if i >= Array.length tape then i
-  else if tape.(i) == blank then i
-  else tape_length (tape, i + 1, blank)
-
-
 (* 定義 def と初期状態 status を受け取り, 終状態を返す *)
 let rec go_transition (def, status, step, n) =
   match (get_next_staus def status) with
     | None            -> (status, step + 1, n)
     | Some new_status -> go_transition (def, new_status, step + 1, n)
 
+
+(* tapeの長さをはかる関数 *)
+let rec tape_length (tape, i, blank) =
+  if i >= Array.length tape then i
+  else if tape.(i) == blank then i
+  else tape_length (tape, i + 1, blank)
 
 (* オーダーを調べる関数の補助関数 *)
 let check_order_return (step, bottom, top, bottom_order, top_order) =
