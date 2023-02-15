@@ -61,7 +61,7 @@ Pattern with no transitions
 
 ## error_loop
 
-Infinite looping error pattern.  
+Infinite looping pattern.  
 r changes the direction in which it moves.
 
 ```
