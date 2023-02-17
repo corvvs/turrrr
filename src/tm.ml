@@ -319,11 +319,79 @@ let print_tm_prologue (tm: turing_machine) =
   tm
 
 (* 定義 def と初期状態 status を受け取り, 終状態を返す *)
-let rec go_transition def status =
+let rec go_transition (def, status, step, n) =
   match (get_next_staus def status) with
-    | None            -> status
-    | Some new_status -> go_transition def new_status
+    | None            -> (status, step + 1, n)
+    | Some new_status -> go_transition (def, new_status, step + 1, n)
 
+
+(* tapeの長さをはかる関数 *)
+let rec tape_length (tape, i, blank) =
+  if i >= Array.length tape then i
+  else if tape.(i) == blank then i
+  else tape_length (tape, i + 1, blank)
+
+(* オーダーを調べる関数の補助関数 *)
+let check_order_return (step, bottom, top, bottom_order, top_order) =
+  if top - step > step - bottom then bottom_order
+  else top_order
+
+let check_order_log_n (step, n) =
+  let log_n = int_of_float (log (float_of_int n)) in
+  if step <= log_n then (step, n, log_n, check_order_return (step, 1, log_n, "O(1)", "O(log n)"), true)
+  else (step, n, log_n, "O(log n)", false)
+
+let check_order_n (step, n, bottom_order, bottom_order_string, continue_flag) =
+  if continue_flag then (step, n, bottom_order, bottom_order_string, continue_flag)
+  else
+  if step <= n then (step, n, n, check_order_return (step, bottom_order, n, bottom_order_string, "O(n)"), true)
+  else (step, n, n, "O(n)", false)
+
+let check_order_n_log_n (step, n, bottom_order, bottom_order_string, continue_flag) =
+  if continue_flag then (step, n, bottom_order, bottom_order_string, continue_flag)
+  else
+  let n_log_n = n * (int_of_float (log (float_of_int n))) in
+  if step <= n_log_n then (step, n, n_log_n, check_order_return (step, bottom_order, n_log_n, bottom_order_string, "O(n log n)"), true)
+  else (step, n, n_log_n, "O(n log n)", false)
+
+let check_order_n_2 (step, n, bottom_order, bottom_order_string, continue_flag) =
+  if continue_flag then (step, n, bottom_order, bottom_order_string, continue_flag)
+  else
+  let n_2 = n * n in
+  if step <= n_2 then (step, n, n_2, check_order_return (step, bottom_order, n_2, bottom_order_string, "O(n^2)"), true)
+  else (step, n, n_2, "O(n^2)", false)
+
+let check_order_pow_n (step, n, bottom_order, bottom_order_string, continue_flag) =
+  if continue_flag then (step, n, bottom_order, bottom_order_string, continue_flag)
+  else
+  let pow_n = int_of_float (2. ** (float_of_int n)) in
+  if step <= pow_n then (step, n, pow_n, check_order_return (step, bottom_order, pow_n, bottom_order_string, "O(n^2)"), true)
+  else (step, n, pow_n, "O(n^2)", false)
+
+let rec fact n =
+  if n = 1 then 1
+  else n * fact (n - 1)
+
+let check_order_n_ex (step, n, bottom_order, bottom_order_string, continue_flag) =
+  if continue_flag || n > 20 then (step, n, bottom_order, bottom_order_string, continue_flag)
+  else
+  let n_ex = fact n in
+  if step <= n_ex then (step, n, n_ex, check_order_return (step, bottom_order, n_ex, bottom_order_string, "O(n!)"), true)
+  else (step, n, n_ex, "O(n!)", false)
+
+
+(* オーダーを調べる関数。ステップ数 step とテープの長さ n を受け取り、どのオーダーかを返す *)
+let check_order (step, n) =
+  (step, n)
+    |> check_order_log_n
+    |> check_order_n
+    |> check_order_n_log_n
+    |> check_order_n_2
+    |> check_order_pow_n
+    |> check_order_n_ex
+    |> (fun (step, n, bottom_order, bottom_order_string, continue_flag)
+      -> bottom_order_string
+    )
 
 
 (* ch から1行読み取り, リストに入れて返す. EOF に達している場合は空のリストを返す. *)
@@ -378,10 +446,10 @@ let _ = if argv_len < 3 then (
       (* 初期表示 *)
       |> print_tm_prologue
       (* マシンを駆動 *)
-      |> (fun tm -> go_transition tm.definition tm.status)
+      |> (fun tm -> go_transition (tm.definition, tm.status, 0, tape_length (tm.status.tape, 0, tm.definition.blank)))
       (* 終状態を表示 *)
-      |> (fun s ->
-        Printf.printf "[%s]\ndone.\n" (stringify_tm_tape s)
+      |> (fun (s, step, n) ->
+        Printf.printf "[%s]\ndone. %s\n" (stringify_tm_tape s) (check_order (step, n))
       )
   ) with
     (* 例外を補足してエラーを表示 *)
