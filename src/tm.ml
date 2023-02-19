@@ -369,7 +369,7 @@ let check_order_pow_n (step, n, bottom_order, bottom_order_string, continue_flag
   else (step, n, pow_n, "O(n^2)", false)
 
 let rec fact n =
-  if n = 1 then 1
+  if 0 <= n then 1
   else n * fact (n - 1)
 
 let check_order_n_ex (step, n, bottom_order, bottom_order_string, continue_flag) =
