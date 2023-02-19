@@ -3,6 +3,7 @@
     "alphabet": [
         "1",
         ".",
+        " ",
         "+",
         "=",
         "R",
@@ -15,7 +16,7 @@
         "]",
         "*"
     ],
-    "blank": ".",
+    "blank": " ",
     "states": [
         "first_search",
         "first_read",
@@ -168,6 +169,12 @@
                 "action": "RIGHT"
             },
             {
+                "read": " ",
+                "to_state": "first_search",
+                "write": " ",
+                "action": "RIGHT"
+            },
+            {
                 "read": "]",
                 "to_state": "first_read",
                 "write": "]",
@@ -182,7 +189,7 @@
                 "action": "LEFT"
             },
             {
-                "read": ".",
+                "read": " ",
                 "to_state": "A._go_start",
                 "write": "*",
                 "action": "LEFT"
@@ -211,6 +218,12 @@
                 "read": ".",
                 "to_state": "A1_go_start",
                 "write": ".",
+                "action": "LEFT"
+            },
+            {
+                "read": " ",
+                "to_state": "A1_go_start",
+                "write": " ",
                 "action": "LEFT"
             },
             {
@@ -288,6 +301,12 @@
                 "action": "LEFT"
             },
             {
+                "read": " ",
+                "to_state": "A._go_start",
+                "write": " ",
+                "action": "LEFT"
+            },
+            {
                 "read": "+",
                 "to_state": "A._go_start",
                 "write": "+",
@@ -359,6 +378,12 @@
                 "read": ".",
                 "to_state": "A+_go_start",
                 "write": ".",
+                "action": "LEFT"
+            },
+            {
+                "read": " ",
+                "to_state": "A+_go_start",
+                "write": " ",
                 "action": "LEFT"
             },
             {
@@ -436,6 +461,12 @@
                 "action": "LEFT"
             },
             {
+                "read": " ",
+                "to_state": "A=_go_start",
+                "write": " ",
+                "action": "LEFT"
+            },
+            {
                 "read": "+",
                 "to_state": "A=_go_start",
                 "write": "+",
@@ -507,6 +538,12 @@
                 "read": ".",
                 "to_state": "B1_go_start",
                 "write": ".",
+                "action": "LEFT"
+            },
+            {
+                "read": " ",
+                "to_state": "B1_go_start",
+                "write": " ",
                 "action": "LEFT"
             },
             {
@@ -584,6 +621,12 @@
                 "action": "LEFT"
             },
             {
+                "read": " ",
+                "to_state": "B._go_start",
+                "write": " ",
+                "action": "LEFT"
+            },
+            {
                 "read": "+",
                 "to_state": "B._go_start",
                 "write": "+",
@@ -655,6 +698,12 @@
                 "read": ".",
                 "to_state": "B+_go_start",
                 "write": ".",
+                "action": "LEFT"
+            },
+            {
+                "read": " ",
+                "to_state": "B+_go_start",
+                "write": " ",
                 "action": "LEFT"
             },
             {
@@ -732,6 +781,12 @@
                 "action": "LEFT"
             },
             {
+                "read": " ",
+                "to_state": "B=_go_start",
+                "write": " ",
+                "action": "LEFT"
+            },
+            {
                 "read": "+",
                 "to_state": "B=_go_start",
                 "write": "+",
@@ -806,6 +861,12 @@
                 "action": "RIGHT"
             },
             {
+                "read": " ",
+                "to_state": "A1_search_>",
+                "write": " ",
+                "action": "RIGHT"
+            },
+            {
                 "read": "+",
                 "to_state": "A1_search_>",
                 "write": "+",
@@ -865,6 +926,12 @@
                 "read": ".",
                 "to_state": "A._search_>",
                 "write": ".",
+                "action": "RIGHT"
+            },
+            {
+                "read": " ",
+                "to_state": "A._search_>",
+                "write": " ",
                 "action": "RIGHT"
             },
             {
@@ -930,6 +997,12 @@
                 "action": "RIGHT"
             },
             {
+                "read": " ",
+                "to_state": "A+_search_>",
+                "write": " ",
+                "action": "RIGHT"
+            },
+            {
                 "read": "+",
                 "to_state": "A+_search_>",
                 "write": "+",
@@ -989,6 +1062,12 @@
                 "read": ".",
                 "to_state": "A=_search_>",
                 "write": ".",
+                "action": "RIGHT"
+            },
+            {
+                "read": " ",
+                "to_state": "A=_search_>",
+                "write": " ",
                 "action": "RIGHT"
             },
             {
@@ -1054,6 +1133,12 @@
                 "action": "RIGHT"
             },
             {
+                "read": " ",
+                "to_state": "B1_search_>",
+                "write": " ",
+                "action": "RIGHT"
+            },
+            {
                 "read": "+",
                 "to_state": "B1_search_>",
                 "write": "+",
@@ -1113,6 +1198,12 @@
                 "read": ".",
                 "to_state": "B._search_>",
                 "write": ".",
+                "action": "RIGHT"
+            },
+            {
+                "read": " ",
+                "to_state": "B._search_>",
+                "write": " ",
                 "action": "RIGHT"
             },
             {
@@ -1178,6 +1269,12 @@
                 "action": "RIGHT"
             },
             {
+                "read": " ",
+                "to_state": "B+_search_>",
+                "write": " ",
+                "action": "RIGHT"
+            },
+            {
                 "read": "+",
                 "to_state": "B+_search_>",
                 "write": "+",
@@ -1237,6 +1334,12 @@
                 "read": ".",
                 "to_state": "B=_search_>",
                 "write": ".",
+                "action": "RIGHT"
+            },
+            {
+                "read": " ",
+                "to_state": "B=_search_>",
+                "write": " ",
                 "action": "RIGHT"
             },
             {
@@ -1936,6 +2039,12 @@
                 "action": "RIGHT"
             },
             {
+                "read": " ",
+                "to_state": "search_A1R",
+                "write": " ",
+                "action": "RIGHT"
+            },
+            {
                 "read": "+",
                 "to_state": "search_A1R",
                 "write": "+",
@@ -2007,6 +2116,12 @@
                 "read": ".",
                 "to_state": "search_A1L",
                 "write": ".",
+                "action": "RIGHT"
+            },
+            {
+                "read": " ",
+                "to_state": "search_A1L",
+                "write": " ",
                 "action": "RIGHT"
             },
             {
@@ -2084,6 +2199,12 @@
                 "action": "RIGHT"
             },
             {
+                "read": " ",
+                "to_state": "search_A.R",
+                "write": " ",
+                "action": "RIGHT"
+            },
+            {
                 "read": "+",
                 "to_state": "search_A.R",
                 "write": "+",
@@ -2140,7 +2261,7 @@
             {
                 "read": "*",
                 "to_state": "read_A",
-                "write": ".",
+                "write": " ",
                 "action": "RIGHT"
             }
         ],
@@ -2158,6 +2279,12 @@
                 "action": "RIGHT"
             },
             {
+                "read": " ",
+                "to_state": "search_A.L",
+                "write": " ",
+                "action": "RIGHT"
+            },
+            {
                 "read": "+",
                 "to_state": "search_A.L",
                 "write": "+",
@@ -2214,7 +2341,7 @@
             {
                 "read": "*",
                 "to_state": "read_A",
-                "write": ".",
+                "write": " ",
                 "action": "LEFT"
             }
         ],
@@ -2229,6 +2356,12 @@
                 "read": ".",
                 "to_state": "search_A+R",
                 "write": ".",
+                "action": "RIGHT"
+            },
+            {
+                "read": " ",
+                "to_state": "search_A+R",
+                "write": " ",
                 "action": "RIGHT"
             },
             {
@@ -2306,6 +2439,12 @@
                 "action": "RIGHT"
             },
             {
+                "read": " ",
+                "to_state": "search_A+L",
+                "write": " ",
+                "action": "RIGHT"
+            },
+            {
                 "read": "+",
                 "to_state": "search_A+L",
                 "write": "+",
@@ -2377,6 +2516,12 @@
                 "read": ".",
                 "to_state": "search_A=R",
                 "write": ".",
+                "action": "RIGHT"
+            },
+            {
+                "read": " ",
+                "to_state": "search_A=R",
+                "write": " ",
                 "action": "RIGHT"
             },
             {
@@ -2454,6 +2599,12 @@
                 "action": "RIGHT"
             },
             {
+                "read": " ",
+                "to_state": "search_A=L",
+                "write": " ",
+                "action": "RIGHT"
+            },
+            {
                 "read": "+",
                 "to_state": "search_A=L",
                 "write": "+",
@@ -2525,6 +2676,12 @@
                 "read": ".",
                 "to_state": "search_B1R",
                 "write": ".",
+                "action": "RIGHT"
+            },
+            {
+                "read": " ",
+                "to_state": "search_B1R",
+                "write": " ",
                 "action": "RIGHT"
             },
             {
@@ -2602,6 +2759,12 @@
                 "action": "RIGHT"
             },
             {
+                "read": " ",
+                "to_state": "search_B1L",
+                "write": " ",
+                "action": "RIGHT"
+            },
+            {
                 "read": "+",
                 "to_state": "search_B1L",
                 "write": "+",
@@ -2676,6 +2839,12 @@
                 "action": "RIGHT"
             },
             {
+                "read": " ",
+                "to_state": "search_B.R",
+                "write": " ",
+                "action": "RIGHT"
+            },
+            {
                 "read": "+",
                 "to_state": "search_B.R",
                 "write": "+",
@@ -2732,7 +2901,7 @@
             {
                 "read": "*",
                 "to_state": "read_B",
-                "write": ".",
+                "write": " ",
                 "action": "RIGHT"
             }
         ],
@@ -2750,6 +2919,12 @@
                 "action": "RIGHT"
             },
             {
+                "read": " ",
+                "to_state": "search_B.L",
+                "write": " ",
+                "action": "RIGHT"
+            },
+            {
                 "read": "+",
                 "to_state": "search_B.L",
                 "write": "+",
@@ -2806,7 +2981,7 @@
             {
                 "read": "*",
                 "to_state": "read_B",
-                "write": ".",
+                "write": " ",
                 "action": "LEFT"
             }
         ],
@@ -2821,6 +2996,12 @@
                 "read": ".",
                 "to_state": "search_B+R",
                 "write": ".",
+                "action": "RIGHT"
+            },
+            {
+                "read": " ",
+                "to_state": "search_B+R",
+                "write": " ",
                 "action": "RIGHT"
             },
             {
@@ -2898,6 +3079,12 @@
                 "action": "RIGHT"
             },
             {
+                "read": " ",
+                "to_state": "search_B+L",
+                "write": " ",
+                "action": "RIGHT"
+            },
+            {
                 "read": "+",
                 "to_state": "search_B+L",
                 "write": "+",
@@ -2969,6 +3156,12 @@
                 "read": ".",
                 "to_state": "search_B=R",
                 "write": ".",
+                "action": "RIGHT"
+            },
+            {
+                "read": " ",
+                "to_state": "search_B=R",
+                "write": " ",
                 "action": "RIGHT"
             },
             {
@@ -3046,6 +3239,12 @@
                 "action": "RIGHT"
             },
             {
+                "read": " ",
+                "to_state": "search_B=L",
+                "write": " ",
+                "action": "RIGHT"
+            },
+            {
                 "read": "+",
                 "to_state": "search_B=L",
                 "write": "+",
@@ -3117,6 +3316,12 @@
                 "read": ".",
                 "to_state": "search_H1R",
                 "write": ".",
+                "action": "RIGHT"
+            },
+            {
+                "read": " ",
+                "to_state": "search_H1R",
+                "write": " ",
                 "action": "RIGHT"
             },
             {
@@ -3194,6 +3399,12 @@
                 "action": "RIGHT"
             },
             {
+                "read": " ",
+                "to_state": "search_H1L",
+                "write": " ",
+                "action": "RIGHT"
+            },
+            {
                 "read": "+",
                 "to_state": "search_H1L",
                 "write": "+",
@@ -3268,6 +3479,12 @@
                 "action": "RIGHT"
             },
             {
+                "read": " ",
+                "to_state": "search_H.R",
+                "write": " ",
+                "action": "RIGHT"
+            },
+            {
                 "read": "+",
                 "to_state": "search_H.R",
                 "write": "+",
@@ -3324,7 +3541,7 @@
             {
                 "read": "*",
                 "to_state": "HALT",
-                "write": ".",
+                "write": " ",
                 "action": "RIGHT"
             }
         ],
@@ -3342,6 +3559,12 @@
                 "action": "RIGHT"
             },
             {
+                "read": " ",
+                "to_state": "search_H.L",
+                "write": " ",
+                "action": "RIGHT"
+            },
+            {
                 "read": "+",
                 "to_state": "search_H.L",
                 "write": "+",
@@ -3398,7 +3621,7 @@
             {
                 "read": "*",
                 "to_state": "HALT",
-                "write": ".",
+                "write": " ",
                 "action": "LEFT"
             }
         ],
@@ -3413,6 +3636,12 @@
                 "read": ".",
                 "to_state": "search_H+R",
                 "write": ".",
+                "action": "RIGHT"
+            },
+            {
+                "read": " ",
+                "to_state": "search_H+R",
+                "write": " ",
                 "action": "RIGHT"
             },
             {
@@ -3490,6 +3719,12 @@
                 "action": "RIGHT"
             },
             {
+                "read": " ",
+                "to_state": "search_H+L",
+                "write": " ",
+                "action": "RIGHT"
+            },
+            {
                 "read": "+",
                 "to_state": "search_H+L",
                 "write": "+",
@@ -3561,6 +3796,12 @@
                 "read": ".",
                 "to_state": "search_H=R",
                 "write": ".",
+                "action": "RIGHT"
+            },
+            {
+                "read": " ",
+                "to_state": "search_H=R",
+                "write": " ",
                 "action": "RIGHT"
             },
             {
@@ -3638,6 +3879,12 @@
                 "action": "RIGHT"
             },
             {
+                "read": " ",
+                "to_state": "search_H=L",
+                "write": " ",
+                "action": "RIGHT"
+            },
+            {
                 "read": "+",
                 "to_state": "search_H=L",
                 "write": "+",
@@ -3706,7 +3953,7 @@
                 "action": "LEFT"
             },
             {
-                "read": ".",
+                "read": " ",
                 "to_state": "A._go_start",
                 "write": "*",
                 "action": "LEFT"
@@ -3732,7 +3979,7 @@
                 "action": "LEFT"
             },
             {
-                "read": ".",
+                "read": " ",
                 "to_state": "B._go_start",
                 "write": "*",
                 "action": "LEFT"

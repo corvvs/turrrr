@@ -219,15 +219,6 @@ Patterns with the same letter.
 ./ft_turing json/error/error_read_status_same.json "111-11="
 ```
 
-## error_read_status_non_ascii
-
-Pattern of non-ascii characters.  
-Only printable ascii characters are supported.
-
-```
-./ft_turing json/error/error_read_status_non_ascii.json "111-11="
-```
-
 ## error_read_initial_list
 
 Pattern of list with value of key initial.
