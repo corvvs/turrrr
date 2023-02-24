@@ -365,11 +365,11 @@ let check_order_pow_n (step, n, bottom_order, bottom_order_string, continue_flag
   if continue_flag then (step, n, bottom_order, bottom_order_string, continue_flag)
   else
   let pow_n = int_of_float (2. ** (float_of_int n)) in
-  if step <= pow_n then (step, n, pow_n, check_order_return (step, bottom_order, pow_n, bottom_order_string, "O(n^2)"), true)
-  else (step, n, pow_n, "O(n^2)", false)
+  if step <= pow_n then (step, n, pow_n, check_order_return (step, bottom_order, pow_n, bottom_order_string, "O(2^n)"), true)
+  else (step, n, pow_n, "O(2^n)", false)
 
 let rec fact n =
-  if 0 <= n then 1
+  if n <= 0 then 1
   else n * fact (n - 1)
 
 let check_order_n_ex (step, n, bottom_order, bottom_order_string, continue_flag) =
