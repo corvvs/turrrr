@@ -55,6 +55,9 @@ usage: ./ft_turing [JSON definition file] [tape]
 - You can simulate a Turing machine by passing a Turing machine defined in a json file and a tape.
 - Time complexity can be calculated. (It's a simple algorithm.)
 
+## Note
+
+ksuzuki, yk directory is a personal test folder and does not contain anything useful.
 
 ## Author
 
