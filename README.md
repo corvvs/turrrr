@@ -1,30 +1,6 @@
 # ft_turing
 
-```
-> ./ft_turing json/unary_add.json "111+11="
-********************************************************************************
-*                                  unary_add                                   *
-********************************************************************************
-Alphabet: [1, ., +, =]
-States: [scanright, eraseone, HALT]
-Initial: scanright
-Finals: [HALT]
-(eraseone, 1) -> (HALT, ., RIGHT)
-(scanright, 1) -> (scanright, 1, RIGHT)
-(scanright, +) -> (scanright, 1, RIGHT)
-(scanright, =) -> (eraseone, ., LEFT)
-********************************************************************************
-[111+11=.................................] (scanright, 1) -> (scanright, 1, RIGHT)
-[111+11=.................................] (scanright, 1) -> (scanright, 1, RIGHT)
-[111+11=.................................] (scanright, 1) -> (scanright, 1, RIGHT)
-[111+11=.................................] (scanright, +) -> (scanright, 1, RIGHT)
-[111111=.................................] (scanright, 1) -> (scanright, 1, RIGHT)
-[111111=.................................] (scanright, 1) -> (scanright, 1, RIGHT)
-[111111=.................................] (scanright, =) -> (eraseone, ., LEFT)
-[111111..................................] (eraseone, 1) -> (HALT, ., RIGHT)
-[11111...................................]
-done. O(n log n)
-```
+![img](https://github.com/corvvs/turrrr/tree/master/img/sample.png)
 
 ## Overview
 
