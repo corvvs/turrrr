@@ -1,6 +1,6 @@
 # ft_turing
 
-![img](https://github.com/corvvs/turrrr/tree/master/img/sample.png)
+![img](https://github.com/corvvs/turrrr/blob/master/img/sample.png)
 
 ## Overview
 
